@@ -5,15 +5,17 @@
         [Cmd.run "echo hello";;]
 
     The [Cmd.run] function returns a triple: an exit code,
-    a stdout buffer, and a stderr buffer. Each of the buffers
-    can be read with [Buff.read]. For example:
+    a stdout buffer, and a stderr buffer.
 
-        [let code, out_buf, err_buf = Cmd.run "echo hello" in]
-	[let out_data = Buff.read out_buff and]
-	[    err_data = Buff.read err_buff in]
-	[Printf.printf "Exit code: %d\n%!" code;]
-	[Printf.printf "Stdout: %s\n%!" out_data;]
-	[Printf.pritnf "Stderr: %s\n%!" err_data;]
+        [let code, out_buf, err_buf = Cmd.run "echo hello";;]
+
+    The exit code is an integer.
+
+        [Printf.printf "Exit code: %d\n%!" code;;]
+
+    Each of the buffers can be read with [Buff.read]. For example:
+
+        [Printf.printf "Stdout: %s\n%!" (Buff.read out_buff);;]
 
     *)
 
@@ -33,8 +35,8 @@ module Cmd : sig
 
   (** Takes a command (as a string), and runs it in the shell. It returns
       a triple of three things: an exit code (an [int]), an in channel/buffer
-      pair that holds the commands stdout, and an in channel/buffer pair
-      that holds the commands stderr. *)
+      pair that holds the command's stdout, and an in channel/buffer pair
+      that holds the command's stderr. *)
   val run : string -> int * (in_channel * Buffer.t) * (in_channel * Buffer.t)
   (** You can treat each in channel/buffer pair as a single object, and
   use [Buff.read] to retrieve its string contents, since [Buff.read] takes an
