@@ -8,16 +8,11 @@ let error_log_target = ref "stderr"
 
 let test_file = ref ""
 
-let require_param s msg =
-  match String.trim s with
-  | "" ->
-    Printf.printf "%s. See %s --help\n" msg program_name;
-    exit 2
-  | _ -> ()
-
 (** Setup the CLI arguments/options. *)
 let cli () =
-  let usage = "Run a scram test." in
+  let usage = Printf.sprintf
+    "USAGE: %s [options] TEST_FILE\n\n  Run scram tests.\n\nOPTIONS:"
+    program_name in
   let specs = [
     ("--verbose-log", Arg.Set_string verbose_log_target,
      "Where to send the verbose log. Default: /dev/null");
@@ -35,8 +30,8 @@ let main () =
   Sys.(set_signal sighup (Signal_handle exit));
   Sys.(set_signal sigint (Signal_handle exit));
 
+  (* Parse the command line parameters. *)
   cli ();
-  require_param !test_file "Specify a TEST_FILE";
 
   (* Set up some log channels. *)
   Logs.create "verbose" !verbose_log_target;
@@ -47,7 +42,15 @@ let main () =
   (* Start reporting to the verbose log. *)
   Logs.log "verbose" (Printf.sprintf "Starting %s." program_name);
 
-  (* Get the test file. *)
+  (* Make sure a test file was specified. *)
+  match String.trim !test_file with
+  | "" ->
+    Logs.log "error" 
+      (Printf.sprintf "Specify a TEST FILE. See '%s --help'." program_name);
+    exit 2
+  | _ -> ();
+
+  (* Open/read the test file. *)
   Logs.log "verbose" (Printf.sprintf "Opening test file: '%s'." !test_file);
   let src =
     try
