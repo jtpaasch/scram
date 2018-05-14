@@ -21,10 +21,16 @@ build:
 	ocamlc -I build -c build/logs.ml
 	ocamlc -I build -c build/ps.mli
 	ocamlc -I build -c build/ps.ml
+	ocamlc -I build -c build/token_type.mli
+	ocamlc -I build -c build/token_type.ml
+	ocamlc -I build -c build/token.mli
+	ocamlc -I build -c build/token.ml
+	ocamlc -I build -c build/lexer.mli
+	ocamlc -I build -c build/lexer.ml
 	ocamlc -I build -c build/main.ml
-	ocamlc -I build -o bin/$(exe_name) unix.cma files.cmo logs.cmo ps.cmo main.cmo
+	ocamlc -I build -o bin/$(exe_name) unix.cma files.cmo logs.cmo ps.cmo token_type.cmo token.cmo lexer.cmo main.cmo
 
 docs: build
 	rm -rf docs
 	mkdir -p docs
-	ocamldoc -html -I build -d docs build/files.mli build/logs.mli build/ps.mli build/main.ml
+	ocamldoc -html -I build -d docs build/files.mli build/logs.mli build/ps.mli build/token_type.mli build/token.mli build/lexer.mli build/main.ml

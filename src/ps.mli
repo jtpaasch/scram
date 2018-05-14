@@ -18,7 +18,7 @@
     *)
 
 (** A helper module for moving data from an [in_channel] to a [Buffer]. *)
-module Buff = sig
+module Buff : sig
 
   (** Reads everything from a channel (in chunks), and stores it in
       a buffer. It takes one argument: a pair [(in_channel, buf)].
@@ -29,7 +29,7 @@ module Buff = sig
 end
 
 (** A module that runs shell commands. *)
-module Cmd = sig
+module Cmd : sig
 
   (** Takes a command (as a string), and runs it in the shell. It returns
       a triple of three things: an exit code (an [int]), an in channel/buffer

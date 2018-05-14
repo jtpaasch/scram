@@ -7,11 +7,17 @@
     or a string path to a file such as ["/path/to/file.log"] (in which
     case the log will write messages to [/path/to/file.log]). *)
 val create : string -> string -> unit
+(** All log channels created this way must be closed, using the [close]
+    or [close_all] functions below. *)
 
+(** If you have created a log named [name], calling [close "name"] will
+    close the log channel. *)
 val close : string -> unit
+
+(** This will close all log channels that have been opened. You can register
+    it with [at_exit], e.g., [at_exit Logs.close_all]. *)
 val close_all : unit -> unit
 
-(** If you use the [create] function below to create a log named [name],
-    then calling [log "name" "A message"] will send [A message] to
-    that log named [name]. *)
+(** If you have created a log named [name], then [log "name" "A message"]
+    will send [A message] to that log. *)
 val log : string -> string -> unit
