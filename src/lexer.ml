@@ -1,11 +1,15 @@
+(** Implements {!Lexer}. *)
 
+(** Pads a string on the right with extra spaces. *)
 let pad s = String.concat "" [s; "    "]
 
+(** Determines if a string contains only whitespace. *)
 let is_blank s =
   match String.trim s with
   | "" -> true
   | _ -> false
 
+(** Identifies which {!Token_type} a string is an instance of. *)
 let token_of s =
   match is_blank s with
   | true -> Token_type.Blank
@@ -20,6 +24,12 @@ let token_of s =
       | "$ " -> Token_type.Code
       | _ -> Token_type.Output
 
+(** Determines whether a token [tk_1] and another token [tk_2] should
+    be grouped together as part of the same token, given a set of
+    already matched tokens [matches]. For some {!Token_type}s, like are
+    grouped with like. For instance, blank lines go together with
+    blank lines. But lines of code should have its expected output
+    grouped with it. *)
 let are_grouped tk_1 tk_2 matches =
   match matches with
   | [] -> true
@@ -30,6 +40,11 @@ let are_grouped tk_1 tk_2 matches =
     | Token_type.Code -> tk_2 = Token_type.Output
     | _ -> false
 
+(** Calling [collect Token_type.Blank [] src] will go through the lines
+    of [src], collecting together lines that are instances of the token
+    type [Token_type.Blank]. When it reaches the first line that is not
+    a match, it returns the blank lines as the [matches], and it returns
+    the remaining lines as [the_rest]. *)
 let rec collect tk matches the_rest =
   match the_rest with
   | [] -> (matches, [])
@@ -41,6 +56,8 @@ let rec collect tk matches the_rest =
       let new_matches = List.append matches [hd] in
       collect tk new_matches tl
 
+(** Given a list of lines [src], [tokenize src []] will break
+    the lines up into tokens and return the list of tokens. *)
 let rec tokenize src acc =
   match src with
   | [] -> acc

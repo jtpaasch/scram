@@ -9,7 +9,7 @@ Lorem ipsum dolor sit amet.
 This is another chunk of text,
 but it's a new paragraph.
 
-  $ echo foo 2> /dev/stdout
+  $ echo foo 2> /dev/stderr
 
 
 

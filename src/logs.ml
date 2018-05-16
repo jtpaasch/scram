@@ -1,6 +1,5 @@
 (** A logging utility. *)
 
-
 exception NoSuchLog of string
 
 let file_opts = [Unix.O_WRONLY; Unix.O_APPEND; Unix.O_CREAT]

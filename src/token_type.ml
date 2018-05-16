@@ -1,3 +1,5 @@
+(** Implements {!Token_type}. *)
+
 type t = Blank | Comment | Code | Output
 
 let string_of t =

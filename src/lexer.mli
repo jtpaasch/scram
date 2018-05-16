@@ -1,12 +1,8 @@
+(** Breaks test files up into tokens. *)
 
-val pad : string -> string
-
-val is_blank : string -> bool
-
+(** Determines which {!Token_type} a string is an instance of. *)
 val token_of : string -> Token_type.t
+(** For example, [token_of "   "] will return [Token_type.Blank]. *)
 
-val are_grouped : Token_type.t -> Token_type.t -> 'a list -> bool
-
-val collect : Token_type.t -> string list -> string list -> string list * string list
-
+(** Given a list of strings and an accumulator, returns a list of tokens. *)
 val tokenize : string list -> Token.t list -> Token.t list

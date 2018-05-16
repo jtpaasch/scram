@@ -63,6 +63,41 @@ let main () =
   Logs.log "verbose" (Printf.sprintf "Contents of file '%s':" !test_file);
   Logs.log "verbose" "------";
   List.iter (fun l -> Logs.log "verbose" l) src;
-  Logs.log "verbose" "------"
+  Logs.log "verbose" "------";
+
+  (** Tokenize the file. *)
+  Logs.log "verbose" "Breaking up file into tokens. Result:";
+  Logs.log "verbose" "------";
+  let tokens = Lexer.tokenize src [] in
+
+  List.iter (fun a ->
+    let token_str = Token.string_of a in
+    Logs.log "verbose" token_str
+  ) tokens;
+  Logs.log "verbose" "------";
+
+  (** Build an AST from the tokens. *)
+  Logs.log "verbose" "Constructing an AST from the tokens. Result:";
+  Logs.log "verbose" "------";
+  let nodes = Ast.build tokens [] in
+
+  List.iter (fun a ->
+    let node_str = Node.string_of a in
+    Logs.log "verbose" node_str
+  ) nodes;
+  Logs.log "verbose" "------";
+
+  (** Run/evaluate the AST. *)
+  Logs.log "verbose" "Running the AST. Result:";
+  Logs.log "verbose" "------";
+  let results = Eval.run nodes [] in
+
+  List.iter (fun a ->
+    let result_str = Result.string_of a in
+    Logs.log "verbose" result_str
+  ) results;
+  Logs.log "verbose" "------";
+
+  Logs.log "verbose" "Finished."
 
 let () = Unix.handle_unix_error main ()

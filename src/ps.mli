@@ -28,6 +28,9 @@ module Buff : sig
       and puts it in the buffer [buf]. *)
   val read : in_channel * Buffer.t -> unit
 
+  (** Gets a copy of the contents in the buffer (as a string). *)
+  val contents : in_channel * Buffer.t -> string
+
 end
 
 (** A module that runs shell commands. *)
