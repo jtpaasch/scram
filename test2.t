@@ -9,7 +9,9 @@ Lorem ipsum dolor sit amet.
 This is another chunk of text,
 but it's a new paragraph.
 
-  $ echo foo 2> /dev/stderr
+Let's run something that errors.
+
+  $ ls -z
 
 
 

@@ -9,7 +9,8 @@ type t = {
   stderr: string list;
   exit_code: int;
   success: bool;
-  diff: string list }
+  diff: string list
+}
 
 let build token data cmd output stdout stderr exit_code success diff =
   { token; data; cmd; output; stdout; stderr; exit_code; success; diff }
@@ -17,47 +18,49 @@ let build token data cmd output stdout stderr exit_code success diff =
 let string_of_data data =
   match List.length data > 0 with
   | false -> ""
-  | true -> Printf.sprintf "%s\n" (String.concat "\n" data)
+  | true ->
+    let data_str = List.map (fun l -> Printf.sprintf "| %s" l) data in
+    Printf.sprintf "%s" (String.concat "\n" data_str)
 
 let string_of_output output =
   match List.length output > 0 with
   | false -> ""
   | true ->
-    let result = List.map (Printf.sprintf "  %s") output in
+    let result = List.map (Printf.sprintf "|   %s") output in
     Printf.sprintf "%s\n" (String.concat "\n" result)
 
 let string_of_stdout stdout =
   match List.length stdout > 0 with
   | false -> ""
   | true ->
-    let result = List.map (Printf.sprintf "  1> %s") stdout in
+    let result = List.map (Printf.sprintf "|   1> %s") stdout in
     Printf.sprintf "%s\n" (String.concat "\n" result)
 
 let string_of_stderr stderr =
   match List.length stderr > 0 with
   | false -> ""
   | true ->
-    let result = List.map (Printf.sprintf "  2> %s") stderr in
+    let result = List.map (Printf.sprintf "|   2> %s") stderr in
     Printf.sprintf "%s\n" (String.concat "\n" result)
 
 let string_of_exit_code exit_code =
   match exit_code with
   | -1 -> ""
-  | n -> Printf.sprintf "  Exit code: %d\n" exit_code
+  | n -> Printf.sprintf "|   Exit code: %d\n" exit_code
 
 let string_of_diff diff =
   match List.length diff > 0 with
   | false -> ""
   | true ->
-    let result = List.map (Printf.sprintf "  +- %s") diff in
-    Printf.sprintf "%s\n" (String.concat "\n" result)
+    let result = List.map (Printf.sprintf "|   +- %s") diff in
+    Printf.sprintf "%s" (String.concat "\n" result)
 
 let string_of t =
   match t.token with
   | Token_type.Blank -> Printf.sprintf "%s" (string_of_data t.data)
   | Token_type.Comment -> Printf.sprintf "%s" (string_of_data t.data)
   | Token_type.Code -> 
-    Printf.sprintf "%s%s%s%s%s"
+    Printf.sprintf "%s\n%s%s%s%s"
       (string_of_data t.data)
       (string_of_stdout t.stdout) (string_of_stderr t.stderr)
       (string_of_exit_code t.exit_code) (string_of_diff t.diff)
