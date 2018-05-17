@@ -12,6 +12,8 @@ type t = {
   diff: string list
 }
 
+exception InvalidNode of string
+
 let build token data cmd output stdout stderr exit_code success diff =
   { token; data; cmd; output; stdout; stderr; exit_code; success; diff }
 
