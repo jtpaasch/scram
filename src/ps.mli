@@ -2,7 +2,7 @@
 
 (** As an example, you can run the command [echo hello]:
 
-     {[Cmd.run "echo hello";;]}
+    {[Cmd.run "echo hello";;]}
 
     The [Cmd.run] function returns a triple: an exit code,
     a stdout buffer, and a stderr buffer.
