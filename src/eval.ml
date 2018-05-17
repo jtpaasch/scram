@@ -1,5 +1,7 @@
 (** Implements {!Eval}. *)
 
+exception InvalidNode of string
+
 (** Takes an AST (constructed with {!Ast.build}) and an accumulator,
     runs all the nodes in the AST, and constructs a list of {!Result}s. *)
 let rec run ast acc =
