@@ -119,4 +119,20 @@ let main () =
   | false -> 1 in
   exit exit_code
 
-let () = Unix.handle_unix_error main ()
+let handle_errors f () =
+  Printexc.register_printer
+    (function
+      | Logs.NoSuchLog msg -> Some (Printf.sprintf "%s" msg)
+      | Ast.InvalidToken -> Some (Printf.sprintf "%s" msg)
+      | Result.InvalidNode -> Some (Printf.sprintf "%s" msg)
+      | Eval.InvalidNode -> Some (Printf.sprintf "%s" msg)
+      | _ -> None
+    );
+  try
+    Unix.handle_unix_error f ()
+  with e ->
+    let msg = Printexc.to_string e in
+    Printf.printf "Error. %s\n%!" msg;
+    exit 1
+
+let () = handle_errors main ()

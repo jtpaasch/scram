@@ -26,6 +26,9 @@ type t = {
   success: bool * status;
   diff: string list }
 
+(** Raised if an invalid node is encountered. *)
+exception InvalidNode of string
+
 (** Builds a result. The parameters are all the data that go in the
     {!Result.t} record. *)
 val build : Token_type.t ->
