@@ -64,7 +64,7 @@ let main () =
     in
 
   let header = Printer.header !test_file in
-  Logs.log "main" header;
+  Logs.log ~fmt:Logs.Emph "main" header;
 
   Logs.log "verbose" "|------------- CONTENTS";
   List.iter (fun l ->
@@ -112,7 +112,7 @@ let main () =
 
   let success = Result.is_successful results in
   let footer = Printer.footer success in
-  Logs.log "main" footer;
+  Logs.log ~fmt:Logs.Emph "main" footer;
 
   let exit_code = match success with
   | true -> 0

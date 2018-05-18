@@ -1,5 +1,13 @@
 (** A log utility. *)
 
+(** TTY Formats that can be applied to log messages. *)
+type ttyfmt =
+  | Plain
+  | Red
+  | Green
+  | Warn
+  | Emph
+
 (** Raised when a log doesn't exist. *)
 exception NoSuchLog of string
 
@@ -23,4 +31,4 @@ val close_all : unit -> unit
 
 (** If you have created a log named [name], then [log "name" "A message"]
     will send [A message] to that log. *)
-val log : string -> string -> unit
+val log : ?fmt:ttyfmt -> string -> string -> unit

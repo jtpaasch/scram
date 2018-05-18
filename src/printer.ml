@@ -41,9 +41,10 @@ let rec build_result results acc =
       raise (InvalidResult msg)
 
 let header title =
-  let line_1 = Printf.sprintf "---------- Running test '%s'" title in
-  let line_2 = "" in
-  String.concat "\n" [line_1; line_2]
+  let line_1 = "========================================" in
+  let line_2 = Printf.sprintf "Running test '%s'" title in
+  let line_3 = "----------------------------------------" in
+  String.concat "\n" [line_1; line_2; line_3]
 
 let test results =
   let lines = build_result results [] in
@@ -54,6 +55,6 @@ let footer success =
   | true -> "PASSED"
   | false -> "FAILED" in
   let line_1 = "" in
-  let line_2 = "================" in
+  let line_2 = "========================================" in
   let line_3 = Printf.sprintf "Test: %s" pass in
   String.concat "\n" [line_1; line_2; line_3]
