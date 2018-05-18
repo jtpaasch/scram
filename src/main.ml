@@ -123,9 +123,10 @@ let handle_errors f () =
   Printexc.register_printer
     (function
       | Logs.NoSuchLog msg -> Some (Printf.sprintf "%s" msg)
-      | Ast.InvalidToken -> Some (Printf.sprintf "%s" msg)
-      | Result.InvalidNode -> Some (Printf.sprintf "%s" msg)
-      | Eval.InvalidNode -> Some (Printf.sprintf "%s" msg)
+      | Ast.InvalidToken msg -> Some (Printf.sprintf "%s" msg)
+      | Result.InvalidNode msg -> Some (Printf.sprintf "%s" msg)
+      | Eval.InvalidNode msg -> Some (Printf.sprintf "%s" msg)
+      | Printer.InvalidResult msg -> Some (Printf.sprintf "%s" msg)
       | _ -> None
     );
   try

@@ -1,5 +1,8 @@
 (** A log utility. *)
 
+(** Raised when a log doesn't exist. *)
+exception NoSuchLog of string
+
 (** Calling [create "name" "target"] creates a log called [name] that
     will write all messages to [target]. The [target] can be the string
     ["stdout"] (in which case the log will write messages to stdout), the
