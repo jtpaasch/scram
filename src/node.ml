@@ -68,6 +68,8 @@ module Code = struct
       as output of that command the lines ["hi"] and ["hi"]. *)
   let create data =
     let cmd, output = process data "" [] in
-    build Token_type.Code data cmd output
+    let cleaned_output =
+      List.map (fun s -> String.sub s 2 ((String.length s) - 2)) output in
+    build Token_type.Code data cmd cleaned_output
 
 end

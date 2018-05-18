@@ -11,7 +11,7 @@ let test_file = ref ""
 (** Setup the CLI arguments/options. *)
 let cli () =
   let usage = Printf.sprintf
-    "USAGE: %s [options] TEST_FILE\n\n  Run scram tests.\n\nOPTIONS:"
+    "USAGE: %s [options] TEST_FILE\n\n  Run a scram TEST_FILE.\n\nOPTIONS:"
     program_name in
   let specs = [
     ("--verbose-log", Arg.Set_string verbose_log_target,
@@ -63,6 +63,9 @@ let main () =
       exit 2
     in
 
+  let header = Printer.header !test_file in
+  Logs.log "main" header;
+
   Logs.log "verbose" "|------------- CONTENTS";
   List.iter (fun l ->
     let raw_str = Printf.sprintf "| %s" l in
@@ -102,7 +105,18 @@ let main () =
     Logs.log "verbose" result_str
   ) results;
   Logs.log "verbose" "|-------- END AST NODES";
+  Logs.log "verbose" "";
 
-  Logs.log "verbose" "Finished."
+  let final_output = Printer.test results in
+  Logs.log "main" final_output;
+
+  let success = Result.is_successful results in
+  let footer = Printer.footer success in
+  Logs.log "main" footer;
+
+  let exit_code = match success with
+  | true -> 0
+  | false -> 1 in
+  exit exit_code
 
 let () = Unix.handle_unix_error main ()

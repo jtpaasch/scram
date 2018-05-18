@@ -1,5 +1,13 @@
 (** The result of executing a {!Node} in an {!Ast}. *)
 
+(** Reasons for why a particular node would pass or fail. *)
+type status =
+  | NA
+  | NonZeroExit
+  | ZeroExit
+  | UnexpectedOutput
+  | ExpectedOutput
+
 (** A [Result] has a [Token_type] and raw [data], as well as a [cmd]
     to execute with a list of expected lines of [output]. In addition,
     it also has the actual [stdout] (a list of lines) and [stderr]
@@ -15,7 +23,7 @@ type t = {
   stdout: string list;
   stderr: string list;
   exit_code: int;
-  success: bool;
+  success: bool * status;
   diff: string list }
 
 (** Builds a result. The parameters are all the data that go in the
@@ -27,11 +35,17 @@ val build : Token_type.t ->
 	    string list ->
 	    string list ->
 	    int ->
-	    bool ->
+	    (bool * status) ->
 	    string list -> t
 
 (** Generates a string representation of a {!Result.t}. *)
 val string_of : t -> string
+
+(** Generates a string representation of a {!status}. *)
+val string_of_status : status -> string
+
+(** Check if all results are successful or not. *)
+val is_successful : t list -> bool
 
 (** Helps construct a [Node.Blank] result. *)
 module Blank : sig
