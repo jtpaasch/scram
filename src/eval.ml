@@ -14,5 +14,5 @@ let rec run ast acc =
     | Token_type.Code -> 
       Result.Code.create hd.Node.data hd.Node.cmd hd.Node.output
     | Token_type.Output ->
-      raise (Failure "Cannot evaluate an output node.") in
+      raise (InvalidNode "Cannot evaluate an output node.") in
       run tl (List.append acc [result])
