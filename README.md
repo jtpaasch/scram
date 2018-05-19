@@ -3,7 +3,7 @@
 A simple cram-like test runner. The syntax for tests are inspired (roughly)
 by cram tests.
 
-Here is an example test (taken from [example-test.t](example-test.t):
+Here is an example test, lifted from [example-test.t](example-test.t):
 
 ```
 Comment lines are fuly left-justified. They have no spaces on the
@@ -36,13 +36,13 @@ If a command doesn't produce output that matches, the test will fail.
 If any commands in the file don't pass, the whole test will fail.
 ```
 
-To run it, point the `scram` executable at it:
+To run that test, point the `scram` test runner (the executable) at it:
 
 ```
 bin/scram example-test.t
 ```
 
-When you run it, it produces output that looks like this:
+`scram` will then print to the screen output that looks like this:
 
 ```
 ========================================
@@ -101,13 +101,13 @@ You can see that `scram` prints the contents of the test, but it fills
 in information about the commands in the file that it ran. Note
 in particular:
 
-* captured stdout is prefixed by `1>`
-* captured stderr is prefixed by `2>`
-* the captured exit code is wrapped in brackets, e.g., `[0]`
-* it notes if (and why) the command succeed or failed
+* Captured stdout is prefixed by `1>`
+* Captured stderr is prefixed by `2>`
+* The captured exit code is wrapped in brackets, e.g., `[0]`
+* It says if (and why) the command succeed or failed
 
 
-## Build
+## Build and install
 
 Clone the repo, then from the root of the repo:
 
@@ -117,26 +117,32 @@ The runnable executable will be created at `bin/scram`. Confirm it:
 
     bin/scram --help
 
+You may install the executable wherever you like. There are
+no dependencies.
+
 
 ## Usage
 
-Run the command and point it to a cram-like test file:
+To run `scram`, point the runner (the executable) to a cram-like test file:
 
     bin/scram example-test.t
 
-This will print out the contents of the test, with the result data
-filled in, as described above.
+`scram` will run the test in `example-test.t`, and print the results
+to the screen, as describe above.
 
 
 ## Logs
 
-By default, the runner will send its main output to stdout, and it will
-send any error messages to stderr. You may specify different places
-for these. For example, you can send these to files:
+By default, `scram` sends its main output to stdout, and it sends
+any error messages to stderr. You may specify different places
+for these. For example, you can send them to files:
 
     bin/scram example-test.t --main-log out.log --error-log err.log
 
-The runner also has a verbose log, which by default sends its messages
+Other valid log destinations are `stdout`, `stderr`, `/dev/null`, or a
+filepath.
+
+`scram` also has a verbose log, which by default sends its messages
 to `/dev/null`. You can send the verbose log to stdout:
 
     bin/scram example-test.t --verbose-log stdout
