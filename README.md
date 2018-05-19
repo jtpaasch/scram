@@ -103,8 +103,8 @@ in particular:
 
 * Captured stdout is prefixed by `1>`
 * Captured stderr is prefixed by `2>`
-* The captured exit code is wrapped in brackets, e.g., `[0]`
-* It says if (and why) the command succeed or failed
+* Captured exit codes are wrapped in brackets, e.g., `[0]`
+* It says if (and why) each command succeed or failed
 
 
 ## Build and install
