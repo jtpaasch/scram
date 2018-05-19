@@ -149,7 +149,7 @@ to `/dev/null`. You can send the verbose log to stdout:
 
     bin/scram example-test.t --verbose-log stdout
 
-Or a file:
+Or any other valid log destination, like a file:
 
     bin/scram example-test.t --verbose-log verbose.log
 
