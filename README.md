@@ -109,6 +109,8 @@ in particular:
 
 ## Build and install
 
+To build and install, you need OCaml 4.06+.
+
 Clone the repo, then from the root of the repo:
 
     make
