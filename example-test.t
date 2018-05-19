@@ -1,21 +1,28 @@
-Comment lines have no spaces on the far left. They are fully
-left-justified lines. So this line and the one above it are comments.
+Comment lines are fuly left-justified. They have no spaces on the
+left. This line and the one before are comments.
 
-A command is indented 2 spaces, with a dollar sign and another space,
-then the command. If it produces an exit code of 0, the test will pass.
+A command follows two spaces, a dollar sign, and another space.
 
   $ echo hello world
 
-You can specify the command's expected output on the lines after the
-command. Expected output must be indented two spaces. If the command
-produces output that doesn't match the expected output, the test will fail.
+If a command doesn't return a 0 exit code, it will fail.
+
+  $ ls -z
+
+You can specify the command's expected output immediately after a
+command. It should be indented two spaces.
 
   $ echo hello again
   hello again
 
-You can use regular expressions in your expected output.
+You can use regular expressions.
 
   $ echo hello one more time
   ^hello .*
 
-Literal matches are checked for first, then regular expressions.
+If a command doesn't produce output that matches, the test will fail.
+
+  $ echo goodbye
+  hello
+
+If any commands in the file don't pass, the whole test will fail.

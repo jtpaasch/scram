@@ -17,6 +17,8 @@ build:
 	cp -R src build
 	ocamlc -I build -c build/files.mli
 	ocamlc -I build -c build/files.ml
+	ocamlc -I build -c build/tty_str.mli
+	ocamlc -I build -c build/tty_str.ml
 	ocamlc -I build -c build/logs.mli
 	ocamlc -I build -c build/logs.ml
 	ocamlc -I build -c build/ps.mli
@@ -40,9 +42,9 @@ build:
 	ocamlc -I build -c build/printer.mli
 	ocamlc -I build -c build/printer.ml
 	ocamlc -I build -c build/main.ml
-	ocamlc -I build -o bin/$(exe_name) unix.cma str.cma files.cmo logs.cmo ps.cmo matcher.cmo token_type.cmo token.cmo lexer.cmo node.cmo ast.cmo result.cmo eval.cmo printer.cmo main.cmo
+	ocamlc -I build -o bin/$(exe_name) unix.cma str.cma files.cmo tty_str.cmo logs.cmo ps.cmo matcher.cmo token_type.cmo token.cmo lexer.cmo node.cmo ast.cmo result.cmo eval.cmo printer.cmo main.cmo
 
 docs: build
 	rm -rf docs
 	mkdir -p docs
-	ocamldoc -html -I build -d docs build/files.mli build/logs.mli build/ps.mli build/matcher.mli build/token_type.mli build/token.mli build/lexer.mli build/node.mli build/ast.mli build/result.mli build/eval.mli build/printer.mli build/main.ml
+	ocamldoc -html -I build -d docs build/files.mli build/tty_str.mli build/logs.mli build/ps.mli build/matcher.mli build/token_type.mli build/token.mli build/lexer.mli build/node.mli build/ast.mli build/result.mli build/eval.mli build/printer.mli build/main.ml

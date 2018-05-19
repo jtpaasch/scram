@@ -41,9 +41,6 @@ val build : Token_type.t ->
 	    (bool * status) ->
 	    string list -> t
 
-(** Generates a string representation of a {!Result.t}. *)
-val string_of : t -> string
-
 (** Generates a string representation of a {!status}. *)
 val string_of_status : status -> string
 

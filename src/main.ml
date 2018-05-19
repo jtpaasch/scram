@@ -14,19 +14,23 @@ let cli () =
     "USAGE: %s [options] TEST_FILE\n\n  Run a scram TEST_FILE.\n\nOPTIONS:"
     program_name in
   let specs = [
+
     ("--verbose-log", Arg.Set_string verbose_log_target,
      "Where to send the verbose log. Default: /dev/null");
+
     ("--main-log", Arg.Set_string main_log_target,
      "Where to send the main log. Default: stdout");
+
     ("--error-log", Arg.Set_string error_log_target,
      "Where to send the error log. Default: stderr");
+
   ] in
   Arg.parse specs (fun a -> test_file := a) usage
 
 (** The main entrypoint to the program. *)
 let main () =
 
-  (* Make sure to go through [exit], so all exit handlers are called. *)
+  (* Make sure to quit through [exit], so all exit handlers are called. *)
   Sys.(set_signal sighup (Signal_handle exit));
   Sys.(set_signal sigint (Signal_handle exit));
 
@@ -40,18 +44,25 @@ let main () =
   at_exit Logs.close_all;
 
   (* Start reporting to the verbose log. *)
-  Logs.log "verbose" (Printf.sprintf "- Starting %s." program_name);
+  let msg = Printf.sprintf "---------------- Starting %s\n" program_name in
+  let msg_ttystr = Tty_str.create ~fmt:Bold msg in
+  Logs.log "verbose" [msg_ttystr];
 
   (* Make sure a test file was specified. *)
   match String.trim !test_file with
   | "" ->
-    Logs.log "error" 
-      (Printf.sprintf "Specify a TEST FILE. See '%s --help'." program_name);
+    let msg =
+      Printf.sprintf "Specify a TEST FILE. See '%s --help'." program_name in
+    let msg_ttystr = Tty_str.create ~fmt:Red msg in
+    Logs.log "error" [msg_ttystr];
     exit 2
   | _ -> ();
 
   (* Open/read the test file. *)
-  Logs.log "verbose" (Printf.sprintf "- Opening test file: '%s'." !test_file);
+  let msg = Printf.sprintf "- Opening test file: '%s'" !test_file in
+  let msg_ttystr = Tty_str.create msg in
+  Logs.log "verbose" [msg_ttystr];
+
   let src =
     try
       Files.load !test_file
@@ -59,60 +70,31 @@ let main () =
       let msg =
         Printf.sprintf "Error: couldn't open '%s'. See '%s --help'."
         !test_file program_name in
-      Logs.log "error" msg;
+      let msg_ttystr = Tty_str.create ~fmt:Red msg in
+      Logs.log "error" [msg_ttystr];
       exit 2
     in
+  Logs.log "verbose" [(Tty_str.create "- File opened/read.\n")];
 
-  let header = Printer.header !test_file in
-  Logs.log ~fmt:Logs.Emph "main" header;
+  let file_output = Printer.pprint_file src in
+  Logs.log "verbose" file_output;
 
-  Logs.log "verbose" "|------------- CONTENTS";
-  List.iter (fun l ->
-    let raw_str = Printf.sprintf "| %s" l in
-    Logs.log "verbose" raw_str
-  ) src;
-  Logs.log "verbose" "|------------ END CONTENTS";
-
-  (** Tokenize the file. *)
-  Logs.log "verbose" "- Breaking up file into tokens.";
-  Logs.log "verbose" "|------------- TOKENS";
   let tokens = Lexer.tokenize src [] in
+  let tokens_output = Printer.pprint_tokens tokens in
+  Logs.log "verbose" tokens_output;
 
-  List.iter (fun a ->
-    let token_str = Token.string_of a in
-    Logs.log "verbose" token_str
-  ) tokens;
-  Logs.log "verbose" "|-------- END TOKENS";
-
-  (** Build an AST from the tokens. *)
-  Logs.log "verbose" "- Constructing an AST from the tokens.";
-  Logs.log "verbose" "|------------- AST NODES";
   let nodes = Ast.build tokens [] in
+  let nodes_output = Printer.pprint_nodes nodes in
+  Logs.log "verbose" nodes_output;
 
-  List.iter (fun a ->
-    let node_str = Node.string_of a in
-    Logs.log "verbose" node_str
-  ) nodes;
-  Logs.log "verbose" "|-------- END AST NODES";
-
-  (** Run/evaluate the AST. *)
-  Logs.log "verbose" "- Executing/evaluating the AST.";
-  Logs.log "verbose" "|------------- RESULTS";
   let results = Eval.run nodes [] in
-
-  List.iter (fun a ->
-    let result_str = Result.string_of a in
-    Logs.log "verbose" result_str
-  ) results;
-  Logs.log "verbose" "|-------- END AST NODES";
-  Logs.log "verbose" "";
-
-  let final_output = Printer.test results in
-  Logs.log "main" final_output;
+  let results_output = Printer.pprint_results results in
+  Logs.log "verbose" results_output;
 
   let success = Result.is_successful results in
-  let footer = Printer.footer success in
-  Logs.log ~fmt:Logs.Emph "main" footer;
+
+  let test_output = Printer.pprint_test !test_file results success in
+  Logs.log "main" test_output;
 
   let exit_code = match success with
   | true -> 0

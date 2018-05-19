@@ -9,16 +9,6 @@ type t = {
 
 let build token data cmd output = { token; data; cmd; output }
 
-let string_of t =
-  Printf.sprintf "%s%s%s%s%s%s%s|%!"
-    "|.....................\n"
-    (Printf.sprintf "| Token type: %s\n" (Token_type.string_of t.token))
-    "| Lines of data:\n"
-    (Printf.sprintf "| - %s\n" (String.concat "\n| - " t.data))
-    (Printf.sprintf "| Cmd: %s\n" t.cmd)
-    "| Output:\n"
-    (Printf.sprintf "| - %s\n" (String.concat "\n| - " t.output))
-
 (** Helps construct [Node_type.Blank] nodes. *)
 module Blank = struct
 

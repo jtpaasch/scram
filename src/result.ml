@@ -32,32 +32,6 @@ let string_of_status s =
   | UnexpectedOutput -> "Unexpected output"
   | ExpectedOutput -> "Output was as expected"
 
-let string_of t =
-  let sep_str = "|.....................\n" in
-  let token_str =
-    Printf.sprintf "| Token type: %s\n" (Token_type.string_of t.token) in
-  let data_lines = List.map (Printf.sprintf "| - %s\n") t.data in
-  let output_lines = List.map (Printf.sprintf "| - %s\n") t.output in
-  let stdout_lines = List.map (Printf.sprintf "| - %s\n") t.stdout in
-  let stderr_lines = List.map (Printf.sprintf "| - %s\n") t.stderr in
-  let passed = match t.success with
-    | (pass, stat) -> 
-      Printf.sprintf "| Success: %b (%s)\n" pass (string_of_status stat) in
-  Printf.sprintf "%s%s%s%s%s%s%s%s%s%s%s%s%s|"
-    sep_str
-    token_str
-    "| Lines of data:\n"
-    (String.concat "" data_lines)
-    (Printf.sprintf "| Cmd: %s\n" t.cmd)
-    "| Expected output:\n"
-    (String.concat "" output_lines)
-    "| Actual stdout:\n"
-    (String.concat "" stdout_lines)
-    "| Actual stderr:\n"
-    (String.concat "" stderr_lines)
-    (Printf.sprintf "| Exit code: %d\n" t.exit_code)
-    passed
-
 let rec is_successful results =
   match results with
   | [] -> true

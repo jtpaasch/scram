@@ -1,13 +1,5 @@
 (** A log utility. *)
 
-(** TTY Formats that can be applied to log messages. *)
-type ttyfmt =
-  | Plain
-  | Red
-  | Green
-  | Warn
-  | Emph
-
 (** Raised when a log doesn't exist. *)
 exception NoSuchLog of string
 
@@ -29,6 +21,9 @@ val close : string -> unit
     it with [at_exit], e.g., [at_exit Logs.close_all]. *)
 val close_all : unit -> unit
 
-(** If you have created a log named [name], then [log "name" "A message"]
-    will send [A message] to that log. *)
-val log : ?fmt:ttyfmt -> string -> string -> unit
+(** If you have created a log named [name] and a list of [Tty_str]
+    strings called [msgs], then [log "name" msgs] will send each [msg]
+    to that log. If the log is connected to a TTY, then any TTY formatting
+    will be applied to each [msg]. Otherwise, the plain string of [msg]
+    will be sent. *)
+val log : string -> Tty_str.t list -> unit

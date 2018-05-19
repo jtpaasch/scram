@@ -10,5 +10,3 @@ val create : Token_type.t -> string list -> t
     will create a comment token, whose data (or value) consists
     of the two lines "Comment 1" and "Comment 2". *)
 
-(** Generates a string representation of a {!Token.t}. *)
-val string_of : t -> string

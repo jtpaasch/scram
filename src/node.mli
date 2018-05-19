@@ -23,9 +23,6 @@ val build : Token_type.t -> string list -> string -> string list -> t
     ["  $ echo hi"] and ["hi"], the command [echo hi], and the
     expected output [hi]. *)
 
-(** Generates a string representation of a [t]. *)
-val string_of : t -> string
-
 (** Helps construct [Token_type.Blank] nodes. *)
 module Blank : sig
 
