@@ -18,13 +18,13 @@ type status =
 type t = {
   token: Token_type.t;
   data: string list;
-  cmd: string;
-  output: string list;
-  stdout: string list;
-  stderr: string list;
-  exit_code: int;
+  cmd: string option;
+  output: string list option;
+  stdout: string list option;
+  stderr: string list option;
+  exit_code: int option;
   success: bool * status;
-  diff: string list }
+}
 
 (** Raised if an invalid node is encountered. *)
 exception InvalidNode of string
@@ -33,13 +33,12 @@ exception InvalidNode of string
     {!Result.t} record. *)
 val build : Token_type.t ->
             string list ->
-	    string ->
-	    string list ->
-	    string list ->
-	    string list ->
-	    int ->
-	    (bool * status) ->
-	    string list -> t
+	    string option ->
+	    string list option ->
+	    string list option ->
+	    string list option ->
+	    int option ->
+	    bool * status -> t
 
 (** Generates a string representation of a {!status}. *)
 val string_of_status : status -> string

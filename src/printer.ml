@@ -9,26 +9,31 @@ let lines_of_blanks r = tty_strings_of r.Result.data
 
 let lines_of_code r =
   let raw_data = List.map (Tty_str.create ~fmt:Bold) r.Result.data in
-  let out = match List.length r.Result.stdout > 0 with
-    | false -> []
-    | true ->
+  let out =
+    match r.Result.stdout with
+    | None -> []
+    | Some x ->
       List.map (fun s ->
         let msg = Printf.sprintf "  1> %s" s in
 	Tty_str.create msg
-      ) r.Result.stdout
+      ) x
     in
-  let err = match List.length r.Result.stderr > 0 with
-    | false -> []
-    | true ->
+  let err =
+    match r.Result.stderr with
+    | None -> []
+    | Some x ->
       List.map (fun s ->
         let msg = Printf.sprintf "  2> %s" s in
 	Tty_str.create msg
-      ) r.Result.stderr
+      ) x
     in
   let exit_code =
-    let msg = Printf.sprintf "  [%d]" r.Result.exit_code in
-    let msg_ttystr = Tty_str.create msg in
-    [msg_ttystr] in
+    match r.Result.exit_code with
+    | None -> raise (InvalidResult "exit code cannot be empty")
+    | Some x ->
+      let msg = Printf.sprintf "  [%d]" x in
+      let msg_ttystr = Tty_str.create msg in
+      [msg_ttystr] in
   let fmt, pass, reason = match r.Result.success with
     | (true, stat) -> (Tty_str.Green, "OK", Result.string_of_status stat)
     | (false, stat) -> (Tty_str.Red, "FAILED", Result.string_of_status stat)
@@ -120,10 +125,24 @@ let marshal_node n =
   let lines_header = Tty_str.create "Raw data:" in
   let lines = List.map (Printf.sprintf "- %s") n.Node.data in
   let lines_ttystrs = List.map Tty_str.create lines in
-  let cmd = Printf.sprintf "Cmd: %s" n.Node.cmd in
+  let cmd =
+    match n.Node.cmd with
+    | Some x -> Printf.sprintf "Cmd: %s" x
+    | None -> "Cmd: N/a" in 
   let cmd_ttystr = Tty_str.create cmd in
-  let output_header = Tty_str.create "Expected output:" in
-  let output = List.map (Printf.sprintf "- %s") n.Node.output in
+  let output_header =
+    match n.Node.output with
+    | Some x -> Tty_str.create "Expected output:"
+    | None -> Tty_str.create "Expected output: N/a" in
+  let output =
+    match n.Node.output with
+    | Some x -> 
+      begin
+        match List.length x with
+        | 0 -> ["- None specified"]
+        | _ -> List.map (Printf.sprintf "- %s") x
+      end
+    | None -> [] in
   let output_ttystrs = List.map Tty_str.create output in
   let footer = Tty_str.create "" in
   List.flatten [[tk_type_ttystr]; [lines_header]; lines_ttystrs;
@@ -140,28 +159,69 @@ let marshal_result r =
   let tk_type = Token_type.string_of r.Result.token in
   let tk_type_str = Printf.sprintf "Token type: %s" tk_type in
   let tk_type_ttystr = Tty_str.create tk_type_str in
+
   let lines_header = Tty_str.create "Raw data:" in
   let lines = List.map (Printf.sprintf "- %s") r.Result.data in
   let lines_ttystrs = List.map Tty_str.create lines in
-  let cmd = Printf.sprintf "Cmd: %s" r.Result.cmd in
+
+  let cmd =
+    match r.Result.cmd with
+    | None -> "Cmd: N/a"
+    | Some x -> Printf.sprintf "Cmd: %s" x in
   let cmd_ttystr = Tty_str.create cmd in
-  let output_header = Tty_str.create "Expected output:" in
-  let output = List.map (Printf.sprintf "- %s") r.Result.output in
+
+  let output_header =
+    match r.Result.output with
+    | None -> Tty_str.create "Expected output: N/a"
+    | Some x -> Tty_str.create "Expected output:" in
+  let output =
+    match r.Result.output with
+    | None -> []
+    | Some x ->
+      match List.length x with
+      | 0 -> ["- None specified"]
+      | _ -> List.map (Printf.sprintf "- %s") x in
   let output_ttystrs = List.map Tty_str.create output in
-  let stdout_header = Tty_str.create "Captured stdout:" in
-  let stdout_data = List.map (Printf.sprintf "- %s") r.Result.stdout in
+
+  let stdout_header =
+    match r.Result.stdout with
+    | None -> Tty_str.create "Captured stdout: N/a"
+    | Some x -> Tty_str.create "Captured stdout:" in
+  let stdout_data =
+    match r.Result.stdout with
+    | None -> []
+    | Some x ->
+      match List.length x with
+      | 0 -> ["- None captured"]
+      | _ -> List.map (Printf.sprintf "- %s") x in
   let stdout_ttystrs = List.map Tty_str.create stdout_data in
-  let stderr_header = Tty_str.create "Captured stderr:" in
-  let stderr_data = List.map (Printf.sprintf "- %s") r.Result.stderr in
+
+  let stderr_header =
+    match r.Result.stderr with
+    | None -> Tty_str.create "Captured stderr: N/a"
+    | Some x -> Tty_str.create "Captured stderr:" in
+  let stderr_data =
+    match r.Result.stderr with
+    | None -> []
+    | Some x ->
+      match List.length x with
+      | 0 -> ["- None captured"]
+      | _ -> List.map (Printf.sprintf "- %s") x in
   let stderr_ttystrs = List.map Tty_str.create stderr_data in
-  let exit_code = Printf.sprintf "Exit code: %d" r.Result.exit_code in
+
+  let exit_code =
+    match r.Result.exit_code with
+    | None -> "Exit code: N/a"
+    | Some x -> Printf.sprintf "Exit code: %d" x in
   let exit_code_ttystr = Tty_str.create exit_code in
+
   let pass, reason =
     match r.Result.success with
     | (true, stat) -> ("Passed", Result.string_of_status stat)
     | (false, stat) -> ("Failed", Result.string_of_status stat) in
   let success = Printf.sprintf "Test result: %s (%s)" pass reason in
   let success_ttystr = Tty_str.create success in
+
   let footer = Tty_str.create "" in
   List.flatten [[tk_type_ttystr]; [lines_header]; lines_ttystrs;
     [cmd_ttystr]; [output_header]; output_ttystrs; [stdout_header];

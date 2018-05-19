@@ -10,19 +10,18 @@ type status =
 type t = {
   token: Token_type.t;
   data: string list;
-  cmd: string;
-  output: string list;
-  stdout: string list;
-  stderr: string list;
-  exit_code: int;
+  cmd: string option;
+  output: string list option;
+  stdout: string list option;
+  stderr: string list option;
+  exit_code: int option;
   success: bool * status;
-  diff: string list
 }
 
 exception InvalidNode of string
 
-let build token data cmd output stdout stderr exit_code success diff =
-  { token; data; cmd; output; stdout; stderr; exit_code; success; diff }
+let build token data cmd output stdout stderr exit_code success =
+  { token; data; cmd; output; stdout; stderr; exit_code; success }
 
 let string_of_status s =
   match s with
@@ -45,7 +44,8 @@ module Blank = struct
 
   (** Takes a list of blank lines taken from a source file,
       and constructs a [Blank] result. *)
-  let create data = build Token_type.Blank data "" [] [] [] 0 (true, NA) []
+  let create data =
+    build Token_type.Blank data None None None None None (true, NA)
 
 end
 
@@ -54,7 +54,8 @@ module Comment = struct
 
   (** Takes a list of comment lines taken from a source file,
       and constructs a [Comment] result. *)
-  let create data = build Token_type.Comment data "" [] [] [] 0 (true, NA) []
+  let create data =
+    build Token_type.Comment data None None None None None (true, NA)
 
 end
 
@@ -108,8 +109,7 @@ module Code = struct
     let stderr = marshal_output err_buf in
     let passed = is_successful exit_code output out_buf err_buf in
     build
-      Token_type.Code data cmd output
-      stdout stderr exit_code
-      passed []
+      Token_type.Code data (Some cmd) (Some output)
+      (Some stdout) (Some stderr) (Some exit_code) passed
 
 end

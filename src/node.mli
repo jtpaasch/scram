@@ -8,17 +8,19 @@
 type t = {
   token : Token_type.t;
   data : string list;
-  cmd : string;
-  output : string list
+  cmd : string option;
+  output : string list option;
 }
 
 (** Builds a node, given a {!Token_type.t}, a list of strings for
-    raw data, a string to execute, and a list of strings of
+    raw data, an optional string to execute, and a list of strings of
     expected output. *)
-val build : Token_type.t -> string list -> string -> string list -> t
-(** For example [build Token_type.Comment ["Comment 1"] "" []] will construct
-    a [Comment] node, which has as raw data the line ["Comment 1"]. Or:
-    [build Token_type.Code ["  $ echo hi"; "hi"] "echo hi" ["hi"]]
+val build :
+  Token_type.t -> string list -> string option -> string list option -> t
+(** For example [build Token_type.Comment ["Comment 1"] None []] will
+    construct a [Comment] node, which has as raw data the line
+    ["Comment 1"]. Or:
+    [build Token_type.Code ["  $ echo hi"; "hi"] (Some "echo hi") ["hi"]]
     will construct a [Code] node, which has as raw data the strings
     ["  $ echo hi"] and ["hi"], the command [echo hi], and the
     expected output [hi]. *)

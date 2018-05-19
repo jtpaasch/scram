@@ -3,8 +3,8 @@
 type t = {
   token : Token_type.t;
   data : string list;
-  cmd : string;
-  output : string list
+  cmd : string option;
+  output : string list option;
 }
 
 let build token data cmd output = { token; data; cmd; output }
@@ -14,7 +14,7 @@ module Blank = struct
 
   (** Constructs a [Blank] node. The [data] should be a list of
       blank lines taken from a source test file. *)
-  let create data = build Token_type.Blank data "" []
+  let create data = build Token_type.Blank data None None
 
 end
 
@@ -23,7 +23,7 @@ module Comment = struct
 
   (** Constructs a [Comment] node. The [data] should be a list of
       comment lines taken from a source test file. *)
-  let create data = build Token_type.Comment data "" []
+  let create data = build Token_type.Comment data None None
 
 end
 
@@ -60,6 +60,6 @@ module Code = struct
     let cmd, output = process data "" [] in
     let cleaned_output =
       List.map (fun s -> String.sub s 2 ((String.length s) - 2)) output in
-    build Token_type.Code data cmd cleaned_output
+    build Token_type.Code data (Some cmd) (Some cleaned_output)
 
 end

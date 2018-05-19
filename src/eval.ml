@@ -12,7 +12,15 @@ let rec run ast acc =
     | Token_type.Blank -> Result.Blank.create hd.Node.data
     | Token_type.Comment -> Result.Comment.create hd.Node.data
     | Token_type.Code -> 
-      Result.Code.create hd.Node.data hd.Node.cmd hd.Node.output
+      let cmd =
+        match hd.Node.cmd with
+        | Some x -> x
+        | None -> raise (InvalidNode "cmd cannot be empty") in
+      let output =
+        match hd.Node.output with
+        | Some x -> x
+        | None -> [] in
+      Result.Code.create hd.Node.data cmd output
     | Token_type.Output ->
       raise (InvalidNode "Cannot evaluate an output node.") in
       run tl (List.append acc [result])
