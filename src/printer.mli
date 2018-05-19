@@ -20,7 +20,7 @@ val pprint_file : string list -> Tty_str.t list
 val pprint_tokens : Token.t list -> Tty_str.t list
 
 (** Generates pprintable output of AST nodes. The argument is a
-    {!Nodes.t} list. This returns a {!Tty_str.t} list. *)
+    {!Node.t} list. This returns a {!Tty_str.t} list. *)
 val pprint_nodes : Node.t list -> Tty_str.t list
 
 (** Generates pprintable output of the executed AST/results. The argument

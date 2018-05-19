@@ -8,7 +8,7 @@ let lines_of_comments r = tty_strings_of r.Result.data
 let lines_of_blanks r = tty_strings_of r.Result.data
 
 let lines_of_code r =
-  let raw_data = tty_strings_of r.Result.data in
+  let raw_data = List.map (Tty_str.create ~fmt:Bold) r.Result.data in
   let out = match List.length r.Result.stdout > 0 with
     | false -> []
     | true ->
