@@ -1,4 +1,4 @@
-Comment lines are fuly left-justified. They have no spaces on the
+Comment lines are fully left-justified. They have no spaces on the
 left. This line and the one before are comments.
 
 A command follows two spaces, a dollar sign, and another space.
