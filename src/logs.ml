@@ -60,13 +60,11 @@ let is_tty oc =
   let fd = Unix.descr_of_out_channel oc in
   Unix.isatty fd
 
-(** Send a [ttymsg] to the log named [key]. The message must be a
-    {!Tty_str.t}. For instance, if you created a log by calling
-    [create "verbose_log" "stdout"], and you created a [Tty_str] string
-    by calling [let msg = Tty_str.create ~fmt:Bold "A message"], then 
-    calling [log "verbose_log" msg] will send the message to stdout. 
-    If the log channel is connected to a TTY, then any [Tty_str]
-    formatting will be applied. *)
+(** If you have created a log named [name] and a list of [Tty_str]
+    strings called [msgs], then [log "name" msgs] will send each [msg]
+    to that log. If the log is connected to a TTY, then any TTY formatting
+    will be applied to each [msg]. Otherwise, the plain string of [msg]
+    will be sent. *)
 let log key ttymsgs =
   match find key with
   | Some oc ->
