@@ -45,7 +45,7 @@ let main () =
 
   (* Start reporting to the verbose log. *)
   let msg = Printf.sprintf "---------------- Starting %s\n" program_name in
-  let msg_ttystr = Tty_str.create ~fmt:Bold msg in
+  let msg_ttystr = Tty_str.create ~fmt:Tty_str.Bold msg in
   Logs.log "verbose" [msg_ttystr];
 
   (* Make sure a test file was specified. *)
@@ -53,7 +53,7 @@ let main () =
   | "" ->
     let msg =
       Printf.sprintf "Specify a TEST FILE. See '%s --help'." program_name in
-    let msg_ttystr = Tty_str.create ~fmt:Red msg in
+    let msg_ttystr = Tty_str.create ~fmt:Tty_str.Red msg in
     Logs.log "error" [msg_ttystr];
     exit 2
   | _ -> ();
@@ -70,7 +70,7 @@ let main () =
       let msg =
         Printf.sprintf "Error: couldn't open '%s'. See '%s --help'."
         !test_file program_name in
-      let msg_ttystr = Tty_str.create ~fmt:Red msg in
+      let msg_ttystr = Tty_str.create ~fmt:Tty_str.Red msg in
       Logs.log "error" [msg_ttystr];
       exit 2
     in

@@ -8,7 +8,7 @@ let lines_of_comments r = tty_strings_of r.Result.data
 let lines_of_blanks r = tty_strings_of r.Result.data
 
 let lines_of_code r =
-  let raw_data = List.map (Tty_str.create ~fmt:Bold) r.Result.data in
+  let raw_data = List.map (Tty_str.create ~fmt:Tty_str.Bold) r.Result.data in
   let out =
     match r.Result.stdout with
     | None -> []
@@ -66,11 +66,11 @@ let test_body results = build_result results []
 
 let test_header title =
   let line_1 =
-    Tty_str.create ~fmt:Bold "========================================" in
+    Tty_str.create ~fmt:Tty_str.Bold "========================================" in
   let line_2 =
-    Tty_str.create ~fmt:Bold (Printf.sprintf "Test '%s'" title) in
+    Tty_str.create ~fmt:Tty_str.Bold (Printf.sprintf "Test '%s'" title) in
   let line_3 =
-    Tty_str.create ~fmt:Bold "----------------------------------------" in
+    Tty_str.create ~fmt:Tty_str.Bold "----------------------------------------" in
   [line_1; line_2; line_3]
 
 let test_footer success =
@@ -95,7 +95,7 @@ let pprint_test title results success =
 (** Generate pprintable output (a {!Tty_str.t} list) from a string list
     (the contents of a file). *)
 let pprint_file lines =
-  let header = Tty_str.create ~fmt:Bold "---------------- File contents\n" in
+  let header = Tty_str.create ~fmt:Tty_str.Bold "---------------- File contents\n" in
   let body = tty_strings_of lines in
   let footer = Tty_str.create "" in
   List.flatten [[header]; body; [footer]]
@@ -113,7 +113,7 @@ let marshal_token tk =
 (** Generate pprintable output (a {!Tty_str.t} list) from
     a {!Token.t} list. *)
 let pprint_tokens tokens =
-  let header = Tty_str.create ~fmt:Bold "---------------- Tokens\n" in
+  let header = Tty_str.create ~fmt:Tty_str.Bold "---------------- Tokens\n" in
   let tokens_output = List.map marshal_token tokens in
   let tokens_ttystrs = List.flatten tokens_output in
   List.flatten [[header]; tokens_ttystrs]
@@ -150,7 +150,7 @@ let marshal_node n =
 
 (** Generate pprintable output (a {!Tty_str.t} list) from a {!Node.t} list. *)
 let pprint_nodes nodes =
-  let header = Tty_str.create ~fmt:Bold "---------------- AST Nodes\n" in
+  let header = Tty_str.create ~fmt:Tty_str.Bold "---------------- AST Nodes\n" in
   let nodes_output = List.map marshal_node nodes in
   let nodes_ttystrs = List.flatten nodes_output in
   List.flatten [[header]; nodes_ttystrs]
@@ -232,7 +232,7 @@ let marshal_result r =
     {!Result.t} list. *)
 let pprint_results results =
   let header =
-    Tty_str.create ~fmt:Bold "---------------- Execution Results\n" in
+    Tty_str.create ~fmt:Tty_str.Bold "---------------- Execution Results\n" in
   let results_output = List.map marshal_result results in
   let results_ttystrs = List.flatten results_output in
   List.flatten [[header]; results_ttystrs]
