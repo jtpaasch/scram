@@ -23,43 +23,67 @@ module Comment = struct
 
   (** Constructs a [Comment] node. The [data] should be a list of
       comment lines taken from a source test file. *)
-  let create data = build Token_type.Comment data None None
+  let create data =
+    build Token_type.Comment data None None
 
 end
 
 (** Helps construct [Node_type.Code] nodes. *)
 module Code = struct
 
-  let pad s = String.concat "" [s; "    "]
+  let extract_cmd s =
+    let len = String.length s in
+    match len > 4 with
+    | false -> s
+    | true -> String.sub s 4 (len - 4)
 
-  (** Walk through the raw data, and separate the [cmd] from
-      the expected [output]. Returns the pair [cmd, output],
-      where [cmd] is a string (a command to execute), and
-      [output] is a list of strings (expected output). *)
-  let rec process data cmd output =
+  let trim_prefixes lines =
+    List.map (fun s -> String.sub s 2 ((String.length s) - 2)) lines
+
+  let process data =
     match data with
-    | [] -> (cmd, output)
-    | hd :: tl ->
-      let padded_s = pad hd in
-      match String.sub padded_s 2 2 with
-      | "$ " ->
-        let cmd_str = String.sub padded_s 4 ((String.length padded_s) - 4) in
-        process tl cmd_str output
-      | _ ->
-        process tl cmd (List.append output [hd])
+    | [] -> ("", [])
+    | hd :: [] -> (extract_cmd hd, [])
+    | hd :: tl -> (extract_cmd hd, trim_prefixes tl)
 
   (** Constructs a [Code] node. The [data] should be a list of
-      lines in the following format: the first line in [data] should
-      be of the form ["  $ CMD"], where [CMD] is a command to execute
-      in a shell. Any further lines in [data] should be expected
-      output from the executed [CMD]. For example, calling
-      [create ["  $ echo hi\nhi"; "hi"; "hi"]] will create a [Code]
-      node that has the command [echo hi\nhi], and which expects
-      as output of that command the lines ["hi"] and ["hi"]. *)
+      one code line taken from a source test file. *)
   let create data =
-    let cmd, output = process data "" [] in
-    let cleaned_output =
-      List.map (fun s -> String.sub s 2 ((String.length s) - 2)) output in
-    build Token_type.Code data (Some cmd) (Some cleaned_output)
+    let cmd, output = process data in
+    build Token_type.Code data (Some cmd) (Some output)
+
+end
+
+(** Helps construct [Node_type.ProfiledCode] nodes. *)
+module ProfiledCode = struct
+
+  let extract_cmd s =
+    let len = String.length s in
+    match len > 4 with
+    | false -> s
+    | true -> String.sub s 4 (len - 4)
+
+  let trim_prefixes lines =
+    List.map (fun s -> String.sub s 2 ((String.length s) - 2)) lines
+
+  let process data =
+    match data with
+    | [] -> ("", [])
+    | hd :: [] -> (extract_cmd hd, [])
+    | hd :: tl -> (extract_cmd hd, trim_prefixes tl)
+
+  (** Constructs a [ProfiledCode] node. The [data] should be a list of
+      one code line taken from a source test file. *)
+  let create data =
+    let cmd, output = process data in
+    build Token_type.ProfiledCode data (Some cmd) (Some output)
+
+end
+
+(** Helps construct [Node_type.Stats] nodes. *)
+module Stats = struct
+
+  let create data =
+    build Token_type.Stats data None None
 
 end

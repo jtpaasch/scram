@@ -1,7 +1,7 @@
 (** Implements {!Lexer}. *)
 
 (** Pads a string on the right with extra spaces. *)
-let pad s = String.concat "" [s; "    "]
+let pad s = String.concat "" [s; "        "]
 
 (** Determines if a string contains only whitespace. *)
 let is_blank s =
@@ -15,14 +15,20 @@ let token_of s =
   | true -> Token_type.Blank
   | false ->
     let padded_s = pad s in
-    let fst_two = String.sub padded_s 0 2 in
-    match is_blank fst_two with
-    | false -> Token_type.Comment
-    | true ->
-      let snd_two = String.sub padded_s 2 2 in
-      match snd_two with
-      | "$ " -> Token_type.Code
-      | _ -> Token_type.Output
+    let fst_three = String.sub padded_s 0 3 in
+    match fst_three with
+    | " *$" -> Token_type.ProfiledCode
+    | _ ->
+      let fst_two = String.sub padded_s 0 2 in
+      match is_blank fst_two with
+      | false -> Token_type.Comment
+      | true ->
+        match String.sub padded_s 2 6 = "#stats" with
+        | true -> Token_type.Stats
+        | false ->
+          match String.sub padded_s 2 2 with
+          | "$ " -> Token_type.Code
+          | _ -> Token_type.Output
 
 (** Determines whether a token [tk_1] and another token [tk_2] should
     be grouped together as part of the same token, given a set of
@@ -38,6 +44,7 @@ let are_grouped tk_1 tk_2 matches =
     | Token_type.Blank -> tk_2 = Token_type.Blank
     | Token_type.Comment -> tk_2 = Token_type.Comment
     | Token_type.Code -> tk_2 = Token_type.Output
+    | Token_type.ProfiledCode -> tk_2 = Token_type.Output
     | _ -> false
 
 (** Calling [collect Token_type.Blank [] src] will go through the lines

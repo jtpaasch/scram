@@ -15,37 +15,31 @@ type t = {
   stdout: string list option;
   stderr: string list option;
   exit_code: int option;
-  success: bool * status;
+  success: Success.t;
+  trials: Trials.t option;
 }
 
 exception InvalidNode of string
 
-let build token data cmd output stdout stderr exit_code success =
-  { token; data; cmd; output; stdout; stderr; exit_code; success }
-
-let string_of_status s =
-  match s with
-  | NA -> "N/a"
-  | NonZeroExit -> "Non-zero exit code"
-  | ZeroExit -> "Exited with a 0 exit code"
-  | UnexpectedOutput -> "Unexpected output"
-  | ExpectedOutput -> "Output was as expected"
+let build token data cmd output stdout stderr exit_code success trials =
+  { token; data; cmd; output; stdout; stderr; exit_code; success; trials }
 
 let rec is_successful results =
   match results with
   | [] -> true
   | hd :: tl ->
-    match hd.success with
-    | (false, _) -> false
-    | (true, _) -> is_successful tl
+    match Success.is_successful hd.success with
+    | false -> false
+    | true -> is_successful tl
 
 (** Helps construct a [Node.Blank] result. *)
 module Blank = struct
 
   (** Takes a list of blank lines taken from a source file,
       and constructs a [Blank] result. *)
-  let create data =
-    build Token_type.Blank data None None None None None (true, NA)
+  let create data = build
+    Token_type.Blank data None None
+    None None None (Success.create true Success.NA) None
 
 end
 
@@ -54,62 +48,54 @@ module Comment = struct
 
   (** Takes a list of comment lines taken from a source file,
       and constructs a [Comment] result. *)
-  let create data =
-    build Token_type.Comment data None None None None None (true, NA)
+  let create data = build
+    Token_type.Comment data None None
+    None None None (Success.create true Success.NA) None
 
 end
 
 (** Helps construct a [Node.Code] result. *)
 module Code = struct
 
-  let strip_final_newline s =
-    match String.length s with
-    | 0 -> s
-    | n ->
-      match String.get s (n - 1) with
-      | '\n' -> String.sub s 0 (n - 1)
-      | _ -> s
-
-  (** Gathers the contents of an output buffer. *)
-  let marshal_output buf =
-    let raw_str = Ps.Buff.contents buf in
-    let trimmed_str = strip_final_newline raw_str in
-    match String.trim trimmed_str with
-    | "" -> []
-    | _ -> String.split_on_char '\n' trimmed_str
-
-  (** Check if the expected output matches stdout or stderr. *)
-  let check_output output out_buf err_buf =
-    let expected_output = String.concat "\n" output in
-    let actual_stdout = Ps.Buff.contents out_buf in
-    let actual_stderr = Ps.Buff.contents err_buf in
-    let stdout_is_match = Matcher.cmp expected_output actual_stdout in
-    let stderr_is_match = Matcher.cmp expected_output actual_stderr in
-    stdout_is_match || stderr_is_match
-
-  (** Check if the code is successful. *)
-  let is_successful exit_code output out_buf err_buf =
-    match exit_code = 0 with
-    | false -> (false, NonZeroExit)
-    | true ->
-      match List.length output > 0 with
-      | false -> (true, ZeroExit)
-      | true -> 
-        match check_output output out_buf err_buf with
-        | true -> (true, ExpectedOutput)
-        | false -> (false, UnexpectedOutput)
-
-  (** Takes a list of data (raw command lines taken from a source file),
-      a [cmd] (a string command to execute), and a list of expected
-      [output] lines (a list of strings). It executes the [cmd] and
-      constructs a [Code] result. *)
+  (** Takes lines of code/output from a source file,
+      and constructs a [Code] result. *)
   let create data cmd output =
-    let exit_code, out_buf, err_buf = Ps.Cmd.run cmd in
-    let stdout = marshal_output out_buf in
-    let stderr = marshal_output err_buf in
-    let passed = is_successful exit_code output out_buf err_buf in
+    let res = Execution.run cmd in
+    let success = Success.get_success 
+      res.Execution.exit_code output 
+      res.Execution.stdout res.Execution.stderr in
     build
       Token_type.Code data (Some cmd) (Some output)
-      (Some stdout) (Some stderr) (Some exit_code) passed
+      (Some res.Execution.stdout) (Some res.Execution.stderr) 
+      (Some res.Execution.exit_code) success None
+
+end
+
+(** Helps construct a [Node.ProfiledCode] result. *)
+module ProfiledCode = struct
+
+  (** Takes lines of code/output from a source file,
+      and constructs a [ProfiledCode] result. *)
+  let create data cmd output =
+    let trials = Trials.run cmd 5 in
+    let res = Trials.last trials in
+    let success = Success.get_success 
+      res.Execution.exit_code output 
+      res.Execution.stdout res.Execution.stderr in
+    build
+      Token_type.ProfiledCode data (Some cmd) (Some output)
+      (Some res.Execution.stdout) (Some res.Execution.stderr) 
+      (Some res.Execution.exit_code) success (Some trials)
+
+end
+
+(** Helps construct a [Node.Stats] result. *)
+module Stats = struct
+
+  (** Takes a list of comment lines taken from a source file,
+      and constructs a [Stats] result. *)
+  let create data = build
+    Token_type.Stats data None None
+    None None None (Success.create true Success.NA) None
 
 end

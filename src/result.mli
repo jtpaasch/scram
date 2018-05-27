@@ -23,7 +23,8 @@ type t = {
   stdout: string list option;
   stderr: string list option;
   exit_code: int option;
-  success: bool * status;
+  success: Success.t;
+  trials: Trials.t option;
 }
 
 (** Raised if an invalid node is encountered. *)
@@ -38,12 +39,11 @@ val build : Token_type.t ->
 	    string list option ->
 	    string list option ->
 	    int option ->
-	    bool * status -> t
+	    Success.t ->
+	    Trials.t option ->
+	    t
 
-(** Generates a string representation of a {!status}. *)
-val string_of_status : status -> string
-
-(** Check if all results are successful or not. *)
+(** Checks if a whole set of results is successful. *)
 val is_successful : t list -> bool
 
 (** Helps construct a [Node.Blank] result. *)
@@ -67,10 +67,25 @@ end
 (** Helps construct a [Node.Code] result. *)
 module Code : sig
 
-  (** Takes a list of data (raw command lines taken from a source file),
-      a [cmd] (a string command to execute), and a list of expected
-      [output] lines (a list of strings). It executes the [cmd] and
-      constructs a [Code] result. *)
+  (** Takes a list of lines of raw data (taken from a source file),
+      and a [cmd] (a string command to execute). *)
   val create : string list -> string -> string list -> t
+
+end
+
+(** Helps construct a [Node.ProfiledCode] result. *)
+module ProfiledCode : sig
+
+  (** Takes a list of one line of raw data (taken from a source file),
+      and a [cmd] (a string command to execute). *)
+  val create : string list -> string -> string list -> t
+
+end
+
+(** Helps construct a [Node.Stats] result. *)
+module Stats : sig
+
+  (** Constructs a [Stats] table. *)
+  val create : string list -> t
 
 end

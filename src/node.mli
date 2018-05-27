@@ -58,3 +58,21 @@ module Code : sig
   val create : string list -> t
 
 end
+
+(** Helps construct [Token_type.ProfiledCode] nodes. *)
+module ProfiledCode : sig
+
+  (** Generates a [ProfiledCode] node consisting of a code line.
+      For example [create [" *$ echo hello"]] will create a
+      [ProfiledCode] node that consists of the line [ *$ echo hello]. *)
+  val create : string list -> t
+
+end
+
+(** Helps construct [Token_type.Stats] nodes. *)
+module Stats : sig
+
+  (** Generates a [Stats] node. *)
+  val create : string list -> t
+
+end
