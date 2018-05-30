@@ -449,11 +449,11 @@ Test: PASSED
   which it ignores.
 * `scram` identifies commands by looking exactly for strings
   that follow two spaces, a dollar sign, and another space,
-  i.e.,`[space][space][dollar-sign][space][command-string].
+  i.e.,`[space][space][dollar-sign][space][command-string]`.
 * `scram` identifies commands to profile by looking exactly
   for strings that follow one space, an asterisk, a dollar sign,
   and another space, i.e.,
-  `[space][asterisk][dollar-sign][space][command-string].
+  `[space][asterisk][dollar-sign][space][command-string]`.
 * Lines of expected output (literal or regular expression) must 
   be indented two spaces, and they must immediately follow 
   a command (or a profiled command).
