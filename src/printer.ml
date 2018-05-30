@@ -66,10 +66,12 @@ let rec collect_stats nodes counter acc =
     let new_counter = counter + 1 in
     let avg = Trials.avg trials in
     let total = Trials.total trials in
+    let num_trials = Trials.num_trials trials in
     let line = [
       Printf.sprintf "%d" new_counter;
       Printf.sprintf "%.4f" avg;
       Printf.sprintf "%.4f" total;
+      Printf.sprintf "%d" num_trials;
     ] in
     let new_acc = List.append acc [line] in
     collect_stats tl new_counter new_acc
@@ -79,7 +81,7 @@ let lines_of_stats r processed =
     List.map (Tty_str.create ~fmt:Tty_str.Bold) (Result.data r) in
   let profiled_nodes = get_profiled_nodes processed in
   let stats = collect_stats profiled_nodes 0 [] in
-  let header_col = ["Id"; "Avg time"; "Total time"] in
+  let header_col = ["Id"; "Avg time"; "Total time"; "Num trials"] in
   let rows = List.append [header_col] stats in
   let table_rows = Tty_table.create rows in
   let tty_table_rows =

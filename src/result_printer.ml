@@ -79,7 +79,7 @@ let marshal_result r =
     match Result.trials r with
     | None -> []
     | Some x ->
-      let count = List.length (Trials.exe x) in
+      let count = Trials.num_trials x in
       let total = Trials.total x in
       let avg = Trials.avg x in
       let num_trials = Printf.sprintf "- Num trials: %d" count in

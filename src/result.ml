@@ -86,8 +86,8 @@ module ProfiledCode = struct
 
   (** Takes lines of code/output from a source file,
       and constructs a [ProfiledCode] result. *)
-  let create data cmd output =
-    let trials = Trials.run cmd 5 in
+  let create data cmd output num_trials =
+    let trials = Trials.run cmd num_trials in
     let res = Trials.last trials in
     let success = Success.get_success 
       res.Execution.exit_code output 

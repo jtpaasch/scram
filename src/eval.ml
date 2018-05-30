@@ -4,7 +4,7 @@ exception InvalidNode of string
 
 (** Takes an AST (constructed with {!Ast.build}) and an accumulator,
     runs all the nodes in the AST, and constructs a list of {!Result}s. *)
-let rec run ast acc =
+let rec run ast num_trials acc =
   match ast with
   | [] -> acc
   | hd :: tl ->
@@ -30,11 +30,11 @@ let rec run ast acc =
         match Node.output hd with
         | Some x -> x
         | None -> [] in
-      Result.ProfiledCode.create (Node.data hd) cmd output
+      Result.ProfiledCode.create (Node.data hd) cmd output num_trials
     | Token_type.Stats ->
       Result.Stats.create (Node.data hd)
     | Token_type.Diff ->
       Result.Diff.create (Node.data hd)
     | Token_type.Output ->
       raise (InvalidNode "Cannot evaluate an output node.") in
-    run tl (List.append acc [result])
+    run tl num_trials (List.append acc [result])

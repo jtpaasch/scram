@@ -1,64 +1,118 @@
 # Scram
 
-A simple cram-like test runner. The syntax for tests are inspired (roughly)
-by cram tests.
+`scram` runs shell commands in a file and checks that they pass (execute successfully).
 
-Here is an example test, lifted from [example-test.t](example-test.t):
+It is inspired by cram tests, hence the name.
+
+
+## Quick start
+
+Build the tool (assuming you have OCaml 4.05+), and then
+use it to check a sample markdown file, (example.md)[example.md].
 
 ```
-Comment lines are fully left-justified. They have no spaces on the
-left. This line and the one before are comments.
+git clone [this-repo]
+cd [repo-dir]
+make
+bin/scram example.md
+```
 
-A command follows two spaces, a dollar sign, and another space.
+The file (example.md)[example.md] describes all cases `scram` covers.
+
+More detailed explanation/examples come next.
+
+Build/install instructions are farther down, near the end of this README.
+
+
+## Example: testing README.md files
+
+Suppose you have a `README.md` which has some shell commands in it.
+Something like this:
+
+```
+To print something to stdout, run the `echo` command:
 
   $ echo hello world
 
-If a command doesn't return a 0 exit code, it will fail.
-
-  $ ls -z
-
-You can specify the command's expected output immediately after a
-command. It should be indented two spaces.
-
-  $ echo hello again
-  hello again
-
-You can use regular expressions.
-
-  $ echo hello one more time
-  ^hello .*
-
-If a command doesn't produce output that matches, the test will fail.
+To print another message, try this:
 
   $ echo goodbye
-  hello
-
-If any commands in the file don't pass, the whole test will fail.
-```
-
-To run that test, point the `scram` test runner (the executable) at it:
 
 ```
-bin/scram example-test.t
+
+To check this file, point the `scram` executable at it:
+
+```
+bin/scram README.md
 ```
 
-`scram` will then print to the screen output that looks like this:
+`scram` will read the file, run the commands it finds in it, and
+print output that looks something like this:
 
 ```
 ========================================
-Test 'example-test.t'
+Test 'README.md'
 ----------------------------------------
-Comment lines are fully left-justified. They have no spaces on the
-left. This line and the one before are comments.
-
-A command follows two spaces, a dollar sign, and another space.
+To print something to stdout, run the `echo` command:
 
   $ echo hello world
   1> hello world
   [0]
   ==> OK (Exited with a 0 exit code)
 
-If a command doesn't return a 0 exit code, it will fail.
+To print another message, try this:
+
+  $ echo goodbye
+  1> goodbye
+  [0]
+  ==> OK (Exited with a 0 exit code)
+
+========================================
+Test: PASSED
+```
+
+You can see that `scram` echos back the contents of the file, but it
+fills in information about the commands in the file that it ran.
+Note in particular:
+
+* It prints the captured stdout, prefixed by `1>`
+  (stderr gets prefixed by `2>`)
+* It prints the captured exit codes in brackets, e.g., `[0]`
+* It says if (and why) the commands succeed (or fail)
+
+By default, commands that exit with a zero exit code pass.
+
+The whole check passes if all commands in a file pass.
+
+
+## Non-zero exit codes
+
+If a command exits with a non-zero exit code, it will fail.
+Consider this `README.md`:
+
+```
+List the files:
+
+  $ ls -z
+
+```
+
+This command tries to invoke `ls` with a `-z` option, but `-z` is not
+a valid option for `ls`. So this should fail.
+
+Check it with `scram`:
+
+```
+bin/scram README.md
+```
+
+`scram` will mark it a failure:
+
+```
+========================================
+Test 'README.md'
+----------------------------------------
+List the files:
 
   $ ls -z
   2> ls: illegal option -- z
@@ -66,71 +120,345 @@ If a command doesn't return a 0 exit code, it will fail.
   [1]
   ==> FAILED (Non-zero exit code)
 
-You can specify the command's expected output immediately after a
-command. It should be indented two spaces.
+========================================
+Test: FAILED
+```
 
-  $ echo hello again
-  hello again
-  1> hello again
+
+## Matching output exactly
+
+You can specify what the output of the command ought to be, by writing
+the expected output immediately below the command.
+For instance, consider this `README.md`:
+
+```
+If you echo `hello world`, it should print `hello world` to stdout:
+
+  $ echo hello world
+  hello world
+
+```
+
+This asserts that the command `echo hello world` should output `hello world`.
+
+Check it with `scram`:
+
+```
+bin/scram README.md
+```
+
+`scram` will mark this as `Ok`, since the output is an exact match:
+
+```
+========================================
+Test 'README.md'
+----------------------------------------
+If you echo `hello world`, it should print `hello world` to stdout:
+
+  $ echo hello world
+  hello world
+  1> hello world
   [0]
   ==> OK (Output was as expected)
 
-You can use regular expressions.
+========================================
+Test: PASSED
+```
 
-  $ echo hello one more time
-  ^hello .*
-  1> hello one more time
-  [0]
-  ==> OK (Output was as expected)
+Suppose a command produces output that doesn't match. For instance,
+consider this `README.md`:
 
-If a command doesn't produce output that matches, the test will fail.
+```
+This should output `goodbye`:
 
-  $ echo goodbye
-  hello
-  1> goodbye
+  $ echo hello
+  goodbye
+
+```
+
+Check it with `scram`:
+
+```
+bin/scram README.md
+```
+
+`scram` will mark this as a failure, since the output doesn't match:
+
+```
+========================================
+Test 'README.md'
+----------------------------------------
+This should output `goodbye`:
+
+  $ echo hello
+  goodbye
+  1> hello
   [0]
   ==> FAILED (Unexpected output)
-
-If any commands in the file don't pass, the whole test will fail.
 
 ========================================
 Test: FAILED
 ```
 
-You can see that `scram` prints the contents of the test, but it fills
-in information about the commands in the file that it ran. Note
-in particular:
 
-* Captured stdout is prefixed by `1>`
-* Captured stderr is prefixed by `2>`
-* Captured exit codes are wrapped in brackets, e.g., `[0]`
-* It says if (and why) each command succeed or failed
+## Matching output with regular expressions
+
+If you don't want exact matches, you can use regular expressions.
+For example, consider this `README.md`:
+
+```
+If you echo `Today is: $(date)` from the command line,
+the output should begin with `Today is`:
+
+  $ echo Today is: $(date)
+  ^Today is.*
+
+```
+
+Check it with `scram`:
+
+```
+bin/scram README.md
+```
+
+`scram` will mark the command `Ok`, since the output matches
+the regular expression:
+
+```
+========================================
+Test 'README.md'
+----------------------------------------
+If you echo `Today is: $(date)` from the command line,
+the output should begin with `Today is`:
+
+  $ echo Today is: $(date)
+  ^Today is.*
+  1> Today is: Wed May 30 14:50:56 UTC 2018
+  [0]
+  ==> OK (Output was as expected)
+
+========================================
+Test: PASSED
+```
+
+
+## Profiling commands
+
+You can tell `scram` to profile the execution time of a command.
+To do that, put an asterisk before the command.
+
+You can then tell `scram` to print the profile stats with the
+`#stats` directive.
+
+Consider this `README.md`:
+
+```
+Echo two lines:
+
+ *$ echo "Lorem ipsum" && echo "dolor sit"
+
+Echo two lines again:
+
+ *$ echo "Lorem ipsum" && echo "sit dolor"
+
+Print how long these commands took to run:
+
+  #stats
+
+```
+
+This has two commands, each prefixed by an asterisk, and then
+at the end of the file it has a `#stats` directive.
+
+Check it with `scram`:
+
+```
+bin/scram README.md
+```
+
+For each asterisk-marked commands, `scram` will run it a number of
+times and calculate its average running time.
+
+Then, under the `#stats`directive, it will print this information.
+
+The output looks something like this:
+
+```
+========================================
+Test 'README.md'
+----------------------------------------
+Echo two lines:
+
+ *$ echo "Lorem ipsum" && echo "dolor sit"
+  1> Lorem ipsum
+  1> dolor sit
+  [0]
+  ==> OK (Exited with a 0 exit code)
+
+Echo two lines again:
+
+ *$ echo "Lorem ipsum" && echo "sit dolor"
+  1> Lorem ipsum
+  1> sit dolor
+  [0]
+  ==> OK (Exited with a 0 exit code)
+
+Print how long these commands took to run:
+
+  #stats
+  +----+----------+------------+------------+
+  | Id | Avg time | Total time | Num trials |
+  +----+----------+------------+------------+
+  | 1  | 0.2514   | 1.2569     | 5          |
+  +----+----------+------------+------------+
+  | 2  | 0.2511   | 1.2553     | 5          |
+  +----+----------+------------+------------+
+
+========================================
+Test: PASSED
+```
+
+In the stats table, the first command's profile is shown in the
+row with an `Id` of `1`, and the second is shown in the row with
+an `Id` of `2`.
+
+You can also tell `scram` to print the output of the profiled commands
+side by side, in case you want to visually compare them.
+
+To do this, use the `#diff` directive. Modify the above `README.md`:
+
+```
+Echo two lines:
+
+ *$ echo "Lorem ipsum" && echo "dolor sit"
+
+Echo two lines again:
+
+ *$ echo "Lorem ipsum" && echo "sit dolor"
+
+Print how long these commands took to run:
+
+  #stats
+
+Show the different output:
+
+  #diff
+
+```
+
+Check it with `scram`:
+
+```
+bin/scram README.md
+```
+
+`scram` will print output that looks something like this:
+
+```
+========================================
+Test 'README.md'
+----------------------------------------
+Echo two lines:
+
+ *$ echo "Lorem ipsum" && echo "dolor sit"
+  1> Lorem ipsum
+  1> dolor sit
+  [0]
+  ==> OK (Exited with a 0 exit code)
+
+Echo two lines again:
+
+ *$ echo "Lorem ipsum" && echo "sit dolor"
+  1> Lorem ipsum
+  1> sit dolor
+  [0]
+  ==> OK (Exited with a 0 exit code)
+
+Print how long these commands took to run:
+
+  #stats
+  +----+----------+------------+------------+
+  | Id | Avg time | Total time | Num trials |
+  +----+----------+------------+------------+
+  | 1  | 0.2514   | 1.2569     | 5          |
+  +----+----------+------------+------------+
+  | 2  | 0.2511   | 1.2553     | 5          |
+  +----+----------+------------+------------+
+
+Show the different output:
+
+    #diff
+    ---------------- [ echo "Lorem ... ]
+    1> Lorem ipsum
+    1> dolor sit
+    ---------------- [ echo "Lorem ... ]
+    1> Lorem ipsum
+    1> sit dolor
+
+========================================
+Test: PASSED
+```
+
+
+## Summary of syntax
+
+* Blank lines are lines that have zero or more whitespace characters.
+* Commentary lines are fully left-justified lines.
+* Commands follow two spaces, a dollar sign, and another space.
+* Profiled commands follow one space, an asterisk, a dollar sign,
+  and a space.
+* Expected output (literal or regular expression) must be indented
+  two spaces, and they must immediately follow a command (or a profiled
+  command).
+* The stats directive is the string `#stats`, indented two spaces.
+* The diff directive is the string `#diff`, indented two spaces.
 
 
 ## Build and install
 
-To build and install, you need OCaml 4.06+.
+To build and install, you need OCaml 4.05+.
 
 Clone the repo, then from the root of the repo:
 
-    make
+```
+make
+```
 
-The runnable executable will be created at `bin/scram`. Confirm it:
+The runnable executable will be created inside the repo,
+at `bin/scram`. Confirm it:
 
-    bin/scram --help
+```
+bin/scram --help
+```
 
 You may install the executable wherever you like. There are
 no dependencies.
 
+This of course can be done in an ocaml docker container.
+
 
 ## Usage
 
-To run `scram`, point the runner (the executable) to a cram-like test file:
+To run `scram`, point the runner (the executable) to a scram-friendly file:
 
-    bin/scram example-test.t
+```
+bin/scram example.md
+```
 
-`scram` will run the test in `example-test.t`, and print the results
-to the screen, as describe above.
+`scram` will then run `example.md`, and print the results to the screen.
+
+
+## Number of trials
+
+As mentioned above, `scram` profiles a command by running it a number
+of times and then calculating its average running time.
+
+You can change the number of trials with the `--num-trials` parameter.
+For instance, to profile a command by running it through 10 time trials:
+
+```
+bin/scram example.md --num-trials 10
+```
 
 
 ## Logs
@@ -139,7 +467,9 @@ By default, `scram` sends its main output to stdout, and it sends
 any error messages to stderr. You may specify different places
 for these. For example, you can send them to files:
 
-    bin/scram example-test.t --main-log out.log --error-log err.log
+```
+bin/scram example.md --main-log out.log --error-log err.log
+```
 
 Other valid log destinations are `stdout`, `stderr`, `/dev/null`, or a
 filepath.
@@ -147,12 +477,15 @@ filepath.
 `scram` also has a verbose log, which by default sends its messages
 to `/dev/null`. You can send the verbose log to stdout:
 
-    bin/scram example-test.t --verbose-log stdout
+```
+bin/scram example.md --verbose-log stdout
+```
 
 Or any other valid log destination, like a file:
 
-    bin/scram example-test.t --verbose-log verbose.log
-
+```
+bin/scram example.md --verbose-log verbose.log
+```
 
 ## Library docs
 

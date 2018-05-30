@@ -5,7 +5,7 @@ let program_name = "scram"
 let verbose_log_target = ref "/dev/null"
 let main_log_target = ref "stdout"
 let error_log_target = ref "stderr"
-
+let num_trials = ref 5
 let test_file = ref ""
 
 (** Setup the CLI arguments/options. *)
@@ -23,6 +23,9 @@ let cli () =
 
     ("--error-log", Arg.Set_string error_log_target,
      "Where to send the error log. Default: stderr");
+
+    ("--num-trials", Arg.Set_int num_trials,
+     "Num times to run profiled commands. Default: 5");
 
   ] in
   Arg.parse specs (fun a -> test_file := a) usage
@@ -87,7 +90,7 @@ let main () =
   let nodes_output = Node_printer.pprint nodes in
   Logs.log "verbose" nodes_output;
 
-  let results = Eval.run nodes [] in
+  let results = Eval.run nodes !num_trials [] in
   let results_output = Result_printer.pprint results in
   Logs.log "verbose" results_output;
 

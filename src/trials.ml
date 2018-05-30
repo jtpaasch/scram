@@ -4,11 +4,13 @@ type t = {
   executions: Execution.t list;
   avg_time: float;
   total_time: float;
+  num_trials: int;
 }
 
 let exe trials = trials.executions
 let avg trials = trials.avg_time
 let total trials = trials.total_time
+let num_trials trials = trials.num_trials
 
 let last trials =
   let execs = exe trials in
@@ -45,4 +47,4 @@ let run cmd num_trials =
   let executions = do_executions cmd num_trials [] in
   let total_time = calc_total executions in
   let avg_time = calc_avg executions total_time in
-  { executions; avg_time; total_time }
+  { executions; avg_time; total_time; num_trials }

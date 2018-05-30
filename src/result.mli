@@ -105,7 +105,7 @@ module ProfiledCode : sig
 
   (** Takes a list of one line of raw data (taken from a source file),
       and a [cmd] (a string command to execute). *)
-  val create : string list -> string -> string list -> t
+  val create : string list -> string -> string list -> int -> t
 
 end
 
