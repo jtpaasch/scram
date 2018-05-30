@@ -76,3 +76,11 @@ module Stats : sig
   val create : string list -> t
 
 end
+
+(** Helps construct [Token_type.Diff] nodes. *)
+module Diff : sig
+
+  (** Generates a [Diff] node. *)
+  val create : string list -> t
+
+end

@@ -87,3 +87,11 @@ module Stats = struct
     build Token_type.Stats data None None
 
 end
+
+(** Helps construct [Node_type.Diff] nodes. *)
+module Diff = struct
+
+  let create data =
+    build Token_type.Diff data None None
+
+end

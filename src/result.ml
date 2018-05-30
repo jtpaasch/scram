@@ -92,10 +92,17 @@ end
 (** Helps construct a [Node.Stats] result. *)
 module Stats = struct
 
-  (** Takes a list of comment lines taken from a source file,
-      and constructs a [Stats] result. *)
   let create data = build
     Token_type.Stats data None None
+    None None None (Success.create true Success.NA) None
+
+end
+
+(** Helps construct a [Node.Diff] result. *)
+module Diff = struct
+
+  let create data = build
+    Token_type.Diff data None None
     None None None (Success.create true Success.NA) None
 
 end

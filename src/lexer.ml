@@ -26,9 +26,12 @@ let token_of s =
         match String.sub padded_s 2 6 = "#stats" with
         | true -> Token_type.Stats
         | false ->
-          match String.sub padded_s 2 2 with
-          | "$ " -> Token_type.Code
-          | _ -> Token_type.Output
+          match String.sub padded_s 2 5 = "#diff" with
+          | true -> Token_type.Diff
+          | false ->
+            match String.sub padded_s 2 2 with
+            | "$ " -> Token_type.Code
+            | _ -> Token_type.Output
 
 (** Determines whether a token [tk_1] and another token [tk_2] should
     be grouped together as part of the same token, given a set of

@@ -7,6 +7,7 @@ type t =
   | Code
   | Output 
   | Stats
+  | Diff
 
 let string_of t =
   match t with
@@ -16,3 +17,4 @@ let string_of t =
   | ProfiledCode -> "PROFILED CODE"
   | Output -> "OUTPUT"
   | Stats -> "STATS"
+  | Diff -> "DIFF"

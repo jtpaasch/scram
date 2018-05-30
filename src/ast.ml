@@ -14,6 +14,7 @@ let rec build tokens acc =
     | Token_type.Code -> Node.Code.create hd.Token.data
     | Token_type.ProfiledCode -> Node.ProfiledCode.create hd.Token.data
     | Token_type.Stats -> Node.Stats.create hd.Token.data
+    | Token_type.Diff -> Node.Diff.create hd.Token.data
     | Token_type.Output ->
       raise (InvalidToken "Cannot process output token in AST.")
     in

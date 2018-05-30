@@ -85,7 +85,15 @@ end
 (** Helps construct a [Node.Stats] result. *)
 module Stats : sig
 
-  (** Constructs a [Stats] table. *)
+  (** Constructs a [Stats] result. *)
+  val create : string list -> t
+
+end
+
+(** Helps construct a [Node.Diff] result. *)
+module Diff : sig
+
+  (** Constructs a [Diff] result. *)
   val create : string list -> t
 
 end

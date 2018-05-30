@@ -33,6 +33,8 @@ let rec run ast acc =
       Result.ProfiledCode.create hd.Node.data cmd output
     | Token_type.Stats ->
       Result.Stats.create hd.Node.data
+    | Token_type.Diff ->
+      Result.Diff.create hd.Node.data
     | Token_type.Output ->
       raise (InvalidNode "Cannot evaluate an output node.") in
     run tl (List.append acc [result])

@@ -8,6 +8,7 @@ type t =
   | Code          (* Code to execute (without profiling). *)
   | Output        (* Output expected from executed code. *)
   | Stats         (* A directive to show profile stats. *)
+  | Diff          (* A directive to show diff of profiled code output. *)
 
 (** Generates a string representation of a {!Token_type.t}. *)
 val string_of : t -> string

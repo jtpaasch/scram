@@ -47,6 +47,12 @@ let lines_of_code r =
 
 let lines_of_profiled_code r = lines_of_code r
 
+let get_profiled_nodes items =
+  List.filter (fun x -> match x.Result.token with
+    | Token_type.ProfiledCode -> true
+    | _ -> false
+  ) items
+
 let rec collect_stats nodes counter acc =
   match nodes with
   | [] -> acc
@@ -69,10 +75,7 @@ let rec collect_stats nodes counter acc =
 
 let lines_of_stats r processed =
   let header = List.map (Tty_str.create ~fmt:Tty_str.Bold) r.Result.data in
-  let profiled_nodes = List.filter (fun x -> match x.Result.token with
-    | Token_type.ProfiledCode -> true
-    | _ -> false
-  ) processed in
+  let profiled_nodes = get_profiled_nodes processed in
   let stats = collect_stats profiled_nodes 0 [] in
   let header_col = ["Id"; "Avg time"; "Total time"] in
   let rows = List.append [header_col] stats in
@@ -80,6 +83,48 @@ let lines_of_stats r processed =
   let tty_table_rows =
     List.map (fun s -> Tty_str.create (Printf.sprintf "  %s" s)) table_rows in 
   List.append header tty_table_rows
+
+let rec collect_output nodes counter acc =
+  match nodes with
+  | [] -> acc
+  | hd :: tl ->
+    let cmd = match hd.Result.cmd with
+    | Some x -> x
+    | None ->
+      let msg = "ProfiledCode node cannot have no cmd" in
+      raise (InvalidResult msg) in
+    let stdout = match hd.Result.stdout with
+    | Some x -> x
+    | None ->
+      let msg = "ProfiledCode node cannot have no stdout" in
+      raise (InvalidResult msg) in
+    let stderr = match hd.Result.stderr with
+    | Some x -> x
+    | None ->
+      let msg = "ProfiledCode node cannot have no stderr" in
+      raise (InvalidResult msg) in
+    let new_counter = counter + 1 in
+    let stdout_lines = List.map (Printf.sprintf "1> %s") stdout in
+    let stderr_lines = List.map (Printf.sprintf "2> %s") stderr in
+    let all_lines = List.append stdout_lines stderr_lines in
+    let cmd_str = match (String.length cmd) < 12 with
+    | true -> String.sub cmd 0 (String.length cmd) 
+    | false ->
+      let cmd_short = String.sub cmd 0 12 in
+      Printf.sprintf "%s..." cmd_short in
+    let header = Printf.sprintf "---------------- [ %s ]" cmd_str in
+    let all_output = List.append [header] all_lines in
+    let new_acc = List.append acc all_output in
+    collect_output tl new_counter new_acc
+
+let lines_of_diff r processed =
+  let header = List.map (Tty_str.create ~fmt:Tty_str.Bold) r.Result.data in
+  let profiled_nodes = get_profiled_nodes processed in
+  let lines = collect_output profiled_nodes 0 [] in
+  let all_lines = List.append lines [""] in
+  let tty_lines =
+    List.map (fun s -> Tty_str.create (Printf.sprintf "  %s" s)) all_lines in
+  List.append header tty_lines
 
 let rec build_result nodes processed acc =
   match nodes with
@@ -108,6 +153,11 @@ let rec build_result nodes processed acc =
       build_result tl new_processed new_acc
     | Token_type.Stats ->
       let output = lines_of_stats hd processed in
+      let new_processed = List.append processed [hd] in
+      let new_acc = List.append acc output in
+      build_result tl new_processed new_acc
+    | Token_type.Diff ->
+      let output = lines_of_diff hd processed in
       let new_processed = List.append processed [hd] in
       let new_acc = List.append acc output in
       build_result tl new_processed new_acc
