@@ -3,6 +3,12 @@
    The argument is a list of rows, where each row is a list of strings.
    The [create] function returns a string you can print to a TTY. *)
 
+let rec range n acc =
+  let len = List.length acc in
+  match len < n with
+  | false -> acc
+  | true -> range n (List.append acc [len])
+
 let rec longest items res =
   match items with
   | [] -> res
@@ -57,6 +63,6 @@ let build_lines idxs widths rows =
 
 let create rows =
   let num_rows = List.length rows in
-  let idxs = List.init num_rows (fun i -> i) in
+  let idxs = range num_rows [] in
   let widths = List.map (fun idx -> longest_cell idx rows) idxs in
   build_lines idxs widths rows
