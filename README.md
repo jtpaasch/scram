@@ -8,7 +8,7 @@ It is inspired by cram tests, hence the name.
 ## Quick start
 
 Build the tool (assuming you have OCaml 4.05+), and then
-use it to check a sample markdown file, (example.md)[example.md].
+use it to check the sample markdown file [example.md](https://raw.githubusercontent.com/jtpaasch/scram/master/example.md).
 
 ```
 git clone [this-repo]
@@ -17,7 +17,7 @@ make
 bin/scram example.md
 ```
 
-The file (example.md)[example.md] describes all cases `scram` covers.
+The file [example.md](https://raw.githubusercontent.com/jtpaasch/scram/master/example.md) describes all cases `scram` covers.
 
 More detailed explanation/examples come next.
 
@@ -72,8 +72,7 @@ Test: PASSED
 ```
 
 You can see that `scram` echos back the contents of the file, but it
-fills in information about the commands in the file that it ran.
-Note in particular:
+fills in information about the commands it ran. Note in particular:
 
 * It prints the captured stdout, prefixed by `1>`
   (stderr gets prefixed by `2>`)
@@ -83,6 +82,8 @@ Note in particular:
 By default, commands that exit with a zero exit code pass.
 
 The whole check passes if all commands in a file pass.
+
+Note: a command must follow two spaces, a dollar sign, and another space.
 
 
 ## Non-zero exit codes
@@ -247,9 +248,6 @@ Test: PASSED
 You can tell `scram` to profile the execution time of a command.
 To do that, put an asterisk before the command.
 
-You can then tell `scram` to print the profile stats with the
-`#stats` directive.
-
 Consider this `README.md`:
 
 ```
@@ -261,14 +259,11 @@ Echo two lines again:
 
  *$ echo "Lorem ipsum" && echo "sit dolor"
 
-Print how long these commands took to run:
-
-  #stats
-
 ```
 
-This has two commands, each prefixed by an asterisk, and then
-at the end of the file it has a `#stats` directive.
+Note: The format is one space, an asterisk, a dollar sign,
+another space, and then the command.
+
 
 Check it with `scram`:
 
@@ -276,12 +271,7 @@ Check it with `scram`:
 bin/scram README.md
 ```
 
-For each asterisk-marked commands, `scram` will run it a number of
-times and calculate its average running time.
-
-Then, under the `#stats`directive, it will print this information.
-
-The output looks something like this:
+`scram` will pause for a moment, before printing the output:
 
 ```
 ========================================
@@ -303,7 +293,59 @@ Echo two lines again:
   [0]
   ==> OK (Exited with a 0 exit code)
 
-Print how long these commands took to run:
+```
+
+The pause occurs because `scram` runs each of the 
+asterisk-marked commands a number of times to calculate
+average running time.
+
+You can tell `scram` to print the profile stats with the
+`#stats` directive. Alter the `README.md` so it looks like this:
+
+```
+Echo two lines:
+
+ *$ echo "Lorem ipsum" && echo "dolor sit"
+
+Echo two lines again:
+
+ *$ echo "Lorem ipsum" && echo "sit dolor"
+
+Print info about how long these commands take to run:
+
+  #stats
+
+```
+
+Check it with `scram`:
+
+```
+bin/scram README.md
+```
+
+The output now looks something like this:
+
+```
+========================================
+Test 'README.md'
+----------------------------------------
+Echo two lines:
+
+ *$ echo "Lorem ipsum" && echo "dolor sit"
+  1> Lorem ipsum
+  1> dolor sit
+  [0]
+  ==> OK (Exited with a 0 exit code)
+
+Echo two lines again:
+
+ *$ echo "Lorem ipsum" && echo "sit dolor"
+  1> Lorem ipsum
+  1> sit dolor
+  [0]
+  ==> OK (Exited with a 0 exit code)
+
+Print info about how long these commands take to run:
 
   #stats
   +----+----------+------------+------------+
@@ -318,14 +360,13 @@ Print how long these commands took to run:
 Test: PASSED
 ```
 
-In the stats table, the first command's profile is shown in the
-row with an `Id` of `1`, and the second is shown in the row with
-an `Id` of `2`.
+In the stats table, the first row shows info about the
+first asterisk-marked command, and the second row shows
+info about the second asterisk-marked command.
 
 You can also tell `scram` to print the output of the profiled commands
-side by side, in case you want to visually compare them.
-
-To do this, use the `#diff` directive. Modify the above `README.md`:
+side by side, in case you want to visually compare them. To do this, 
+use the `#diff` directive. Modify the `README.md` again:
 
 ```
 Echo two lines:
@@ -336,7 +377,7 @@ Echo two lines again:
 
  *$ echo "Lorem ipsum" && echo "sit dolor"
 
-Print how long these commands took to run:
+Print info about how long these commands take to run:
 
   #stats
 
@@ -374,7 +415,7 @@ Echo two lines again:
   [0]
   ==> OK (Exited with a 0 exit code)
 
-Print how long these commands took to run:
+Print info about how long these commands take to run:
 
   #stats
   +----+----------+------------+------------+
@@ -402,14 +443,20 @@ Test: PASSED
 
 ## Summary of syntax
 
-* Blank lines are lines that have zero or more whitespace characters.
-* Commentary lines are fully left-justified lines.
-* Commands follow two spaces, a dollar sign, and another space.
-* Profiled commands follow one space, an asterisk, a dollar sign,
-  and a space.
-* Expected output (literal or regular expression) must be indented
-  two spaces, and they must immediately follow a command (or a profiled
-  command).
+* `scram` sees any line that has zero or more whitespace 
+  characters as a blank line, which it ignores.
+* `scram` sees any fully left-justified lines as commentary, 
+  which it ignores.
+* `scram` identifies commands by looking exactly for strings
+  that follow two spaces, a dollar sign, and another space,
+  i.e.,`[space][space][dollar-sign][space][command-string].
+* `scram` identifies commands to profile by looking exactly
+  for strings that follow one space, an asterisk, a dollar sign,
+  and another space, i.e.,
+  `[space][asterisk][dollar-sign][space][command-string].
+* Lines of expected output (literal or regular expression) must 
+  be indented two spaces, and they must immediately follow 
+  a command (or a profiled command).
 * The stats directive is the string `#stats`, indented two spaces.
 * The diff directive is the string `#diff`, indented two spaces.
 
@@ -439,7 +486,7 @@ This of course can be done in an ocaml docker container.
 
 ## Usage
 
-To run `scram`, point the runner (the executable) to a scram-friendly file:
+To run `scram`, point the runner (the executable) to a file, for instance:
 
 ```
 bin/scram example.md
