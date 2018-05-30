@@ -76,24 +76,24 @@ let main () =
     in
   Logs.log "verbose" [(Tty_str.create "- File opened/read.\n")];
 
-  let file_output = Printer.pprint_file src in
+  let file_output = File_printer.pprint src in
   Logs.log "verbose" file_output;
 
   let tokens = Lexer.tokenize src [] in
-  let tokens_output = Printer.pprint_tokens tokens in
+  let tokens_output = Token_printer.pprint tokens in
   Logs.log "verbose" tokens_output;
 
   let nodes = Ast.build tokens [] in
-  let nodes_output = Printer.pprint_nodes nodes in
+  let nodes_output = Node_printer.pprint nodes in
   Logs.log "verbose" nodes_output;
 
   let results = Eval.run nodes [] in
-  let results_output = Printer.pprint_results results in
+  let results_output = Result_printer.pprint results in
   Logs.log "verbose" results_output;
 
   let success = Result.is_successful results in
 
-  let test_output = Printer.pprint_test !test_file results success in
+  let test_output = Printer.pprint !test_file results success in
   Logs.log "main" test_output;
 
   let exit_code = match success with

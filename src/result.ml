@@ -24,6 +24,16 @@ exception InvalidNode of string
 let build token data cmd output stdout stderr exit_code success trials =
   { token; data; cmd; output; stdout; stderr; exit_code; success; trials }
 
+let token t = t.token
+let data t = t.data
+let cmd t = t.cmd
+let output t = t.output
+let stdout t = t.stdout
+let stderr t = t.stderr
+let exit_code t = t.exit_code
+let success t = t.success
+let trials t = t.trials
+
 let rec is_successful results =
   match results with
   | [] -> true

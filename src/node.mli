@@ -25,6 +25,18 @@ val build :
     ["  $ echo hi"] and ["hi"], the command [echo hi], and the
     expected output [hi]. *)
 
+(** Get the token type of a node. *)
+val token : t -> Token_type.t
+
+(** Get the raw data of the node. *)
+val data : t -> string list
+
+(** Get the command of the node. *)
+val cmd : t -> string option
+
+(** Get the expected output of the node. *)
+val output : t -> string list option
+
 (** Helps construct [Token_type.Blank] nodes. *)
 module Blank : sig
 

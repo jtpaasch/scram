@@ -15,8 +15,6 @@ build:
 	mkdir -p bin
 	rm -rf build
 	cp -R src build
-	ocamlc -I build -c build/files.mli
-	ocamlc -I build -c build/files.ml
 	ocamlc -I build -c build/tty_str.mli
 	ocamlc -I build -c build/tty_str.ml
 	ocamlc -I build -c build/tty_table.mli
@@ -27,6 +25,10 @@ build:
 	ocamlc -I build -c build/ps.ml
 	ocamlc -I build -c build/matcher.mli
 	ocamlc -I build -c build/matcher.ml
+	ocamlc -I build -c build/files.mli
+	ocamlc -I build -c build/files.ml
+	ocamlc -I build -c build/file_printer.mli
+	ocamlc -I build -c build/file_printer.ml
 	ocamlc -I build -c build/execution.mli
 	ocamlc -I build -c build/execution.ml
 	ocamlc -I build -c build/success.mli
@@ -37,22 +39,28 @@ build:
 	ocamlc -I build -c build/token_type.ml
 	ocamlc -I build -c build/token.mli
 	ocamlc -I build -c build/token.ml
+	ocamlc -I build -c build/token_printer.mli
+	ocamlc -I build -c build/token_printer.ml
 	ocamlc -I build -c build/lexer.mli
 	ocamlc -I build -c build/lexer.ml
 	ocamlc -I build -c build/node.mli
 	ocamlc -I build -c build/node.ml
+	ocamlc -I build -c build/node_printer.mli
+	ocamlc -I build -c build/node_printer.ml
 	ocamlc -I build -c build/ast.mli
 	ocamlc -I build -c build/ast.ml
 	ocamlc -I build -c build/result.mli
 	ocamlc -I build -c build/result.ml
+	ocamlc -I build -c build/result_printer.mli
+	ocamlc -I build -c build/result_printer.ml
 	ocamlc -I build -c build/eval.mli
 	ocamlc -I build -c build/eval.ml
 	ocamlc -I build -c build/printer.mli
 	ocamlc -I build -c build/printer.ml
 	ocamlc -I build -c build/main.ml
-	ocamlc -I build -o bin/$(exe_name) unix.cma str.cma files.cmo tty_str.cmo tty_table.cmo logs.cmo ps.cmo matcher.cmo execution.cmo trials.cmo success.cmo token_type.cmo token.cmo lexer.cmo node.cmo ast.cmo result.cmo eval.cmo printer.cmo main.cmo
+	ocamlc -I build -o bin/$(exe_name) unix.cma str.cma tty_str.cmo tty_table.cmo logs.cmo ps.cmo matcher.cmo files.cmo file_printer.cmo execution.cmo trials.cmo success.cmo token_type.cmo token.cmo token_printer.cmo lexer.cmo node.cmo node_printer.cmo ast.cmo result.cmo result_printer.cmo eval.cmo printer.cmo main.cmo
 
 docs: build
 	rm -rf docs
 	mkdir -p docs
-	ocamldoc -html -I build -d docs build/files.mli build/tty_str.mli build/tty_table.mli build/logs.mli build/ps.mli build/matcher.mli build/execution.mli build/trials.mli build/success.mli build/token_type.mli build/token.mli build/lexer.mli build/node.mli build/ast.mli build/result.mli build/eval.mli build/printer.mli build/main.ml
+	ocamldoc -html -I build -d docs build/tty_str.mli build/tty_table.mli build/logs.mli build/ps.mli build/matcher.mli build/files.mli build/file_printer.mli build/execution.mli build/trials.mli build/success.mli build/token_type.mli build/token.mli build/token_printer.mli build/lexer.mli build/node.mli build/node_printer.mli build/ast.mli build/result.mli build/result_printer.mli build/eval.mli build/printer.mli build/main.ml

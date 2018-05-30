@@ -10,3 +10,8 @@ val create : Token_type.t -> string list -> t
     will create a comment token, whose data (or value) consists
     of the two lines "Comment 1" and "Comment 2". *)
 
+(** Get the token type of the token. *)
+val token : t -> Token_type.t
+
+(** Get the raw data of the token. *)
+val data : t -> string list

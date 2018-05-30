@@ -8,33 +8,33 @@ let rec run ast acc =
   match ast with
   | [] -> acc
   | hd :: tl ->
-    let result = match hd.Node.token with
-    | Token_type.Blank -> Result.Blank.create hd.Node.data
-    | Token_type.Comment -> Result.Comment.create hd.Node.data
+    let result = match Node.token hd with
+    | Token_type.Blank -> Result.Blank.create (Node.data hd)
+    | Token_type.Comment -> Result.Comment.create (Node.data hd)
     | Token_type.Code ->
       let cmd =
-        match hd.Node.cmd with
+        match Node.cmd hd with
         | Some x -> x
         | None -> raise (InvalidNode "cmd cannot be empty") in
       let output =
-        match hd.Node.output with
+        match Node.output hd with
         | Some x -> x
         | None -> [] in
-      Result.Code.create hd.Node.data cmd output
+      Result.Code.create (Node.data hd) cmd output
     | Token_type.ProfiledCode ->
       let cmd =
-        match hd.Node.cmd with
+        match Node.cmd hd with
         | Some x -> x
         | None -> raise (InvalidNode "cmd cannot be empty") in
       let output =
-        match hd.Node.output with
+        match Node.output hd with
         | Some x -> x
         | None -> [] in
-      Result.ProfiledCode.create hd.Node.data cmd output
+      Result.ProfiledCode.create (Node.data hd) cmd output
     | Token_type.Stats ->
-      Result.Stats.create hd.Node.data
+      Result.Stats.create (Node.data hd)
     | Token_type.Diff ->
-      Result.Diff.create hd.Node.data
+      Result.Diff.create (Node.data hd)
     | Token_type.Output ->
       raise (InvalidNode "Cannot evaluate an output node.") in
     run tl (List.append acc [result])

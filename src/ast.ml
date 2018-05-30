@@ -8,13 +8,13 @@ let rec build tokens acc =
   match tokens with
   | [] -> acc
   | hd :: tl ->
-    let node = match hd.Token.token with
-    | Token_type.Blank -> Node.Blank.create hd.Token.data
-    | Token_type.Comment -> Node.Comment.create hd.Token.data
-    | Token_type.Code -> Node.Code.create hd.Token.data
-    | Token_type.ProfiledCode -> Node.ProfiledCode.create hd.Token.data
-    | Token_type.Stats -> Node.Stats.create hd.Token.data
-    | Token_type.Diff -> Node.Diff.create hd.Token.data
+    let node = match Token.token hd with
+    | Token_type.Blank -> Node.Blank.create (Token.data hd)
+    | Token_type.Comment -> Node.Comment.create (Token.data hd)
+    | Token_type.Code -> Node.Code.create (Token.data hd)
+    | Token_type.ProfiledCode -> Node.ProfiledCode.create (Token.data hd)
+    | Token_type.Stats -> Node.Stats.create (Token.data hd)
+    | Token_type.Diff -> Node.Diff.create (Token.data hd)
     | Token_type.Output ->
       raise (InvalidToken "Cannot process output token in AST.")
     in

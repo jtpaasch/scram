@@ -43,6 +43,33 @@ val build : Token_type.t ->
 	    Trials.t option ->
 	    t
 
+(** Get the token type of the result node. *)
+val token : t -> Token_type.t
+
+(** Get the raw data of the result node. *)
+val data : t -> string list
+
+(** Get the command of a result node. *)
+val cmd : t -> string option
+
+(** Get the expected output of a result node. *)
+val output : t -> string list option
+
+(** Get the captured stdout of a result node. *)
+val stdout : t -> string list option
+
+(** Get the captured stderr of a result node. *)
+val stderr : t -> string list option
+
+(** Get the exit code of a result node. *)
+val exit_code : t -> int option
+
+(** Get the success of a result node. *)
+val success : t -> Success.t
+
+(** Get the trials of a result node. *)
+val trials : t -> Trials.t option
+
 (** Checks if a whole set of results is successful. *)
 val is_successful : t list -> bool
 

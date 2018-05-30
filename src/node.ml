@@ -9,6 +9,11 @@ type t = {
 
 let build token data cmd output = { token; data; cmd; output }
 
+let token t = t.token
+let data t = t.data
+let cmd t = t.cmd
+let output t = t.output
+
 (** Helps construct [Node_type.Blank] nodes. *)
 module Blank = struct
 
