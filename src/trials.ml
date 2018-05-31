@@ -7,13 +7,13 @@ type t = {
   num_trials: int;
 }
 
-let exe trials = trials.executions
-let avg trials = trials.avg_time
-let total trials = trials.total_time
-let num_trials trials = trials.num_trials
+let executions t = t.executions
+let avg_time t = t.avg_time
+let total_time t = t.total_time
+let num_trials t = t.num_trials
 
-let last trials =
-  let execs = exe trials in
+let last t =
+  let execs = executions t in
   let num_execs = List.length execs in
   List.nth execs (num_execs - 1)
 
@@ -22,7 +22,7 @@ let rec sumf items acc =
   | [] -> acc
   | hd :: tl -> sumf tl (acc +. hd)
 
-let durations execs = List.map (fun x -> x.Execution.duration) execs
+let durations execs = List.map (fun x -> Execution.duration x) execs
 
 let calc_total execs =
   let times = durations execs in

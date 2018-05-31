@@ -72,12 +72,12 @@ module Code = struct
   let create data cmd output =
     let res = Execution.run cmd in
     let success = Success.get_success 
-      res.Execution.exit_code output 
-      res.Execution.stdout res.Execution.stderr in
+      (Execution.exit_code res) output 
+      (Execution.stdout res) (Execution.stderr res) in
     build
       Token_type.Code data (Some cmd) (Some output)
-      (Some res.Execution.stdout) (Some res.Execution.stderr) 
-      (Some res.Execution.exit_code) success None
+      (Some (Execution.stdout res)) (Some (Execution.stderr res)) 
+      (Some (Execution.exit_code res)) success None
 
 end
 
@@ -90,12 +90,12 @@ module ProfiledCode = struct
     let trials = Trials.run cmd num_trials in
     let res = Trials.last trials in
     let success = Success.get_success 
-      res.Execution.exit_code output 
-      res.Execution.stdout res.Execution.stderr in
+      (Execution.exit_code res) output 
+      (Execution.stdout res) (Execution.stderr res) in
     build
       Token_type.ProfiledCode data (Some cmd) (Some output)
-      (Some res.Execution.stdout) (Some res.Execution.stderr) 
-      (Some res.Execution.exit_code) success (Some trials)
+      (Some (Execution.stdout res)) (Some (Execution.stderr res)) 
+      (Some (Execution.exit_code res)) success (Some trials)
 
 end
 

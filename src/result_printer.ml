@@ -80,8 +80,8 @@ let marshal_result r =
     | None -> []
     | Some x ->
       let count = Trials.num_trials x in
-      let total = Trials.total x in
-      let avg = Trials.avg x in
+      let total = Trials.total_time x in
+      let avg = Trials.avg_time x in
       let num_trials = Printf.sprintf "- Num trials: %d" count in
       let total = Printf.sprintf "- Total time: %.4f secs" total in
       let avg = Printf.sprintf "- Avg time: %.4f secs" avg in
@@ -99,11 +99,11 @@ let marshal_result r =
     | None -> []
     | Some x ->
       List.map (fun trial ->
-        let cmd = trial.Execution.cmd in
-        let dur = trial.Execution.duration in
-        let out = trial.Execution.stdout in
-        let err = trial.Execution.stderr in
-        let ex_code = trial.Execution.exit_code in
+        let cmd = Execution.cmd trial in
+        let dur = Execution.duration trial in
+        let out = Execution.stdout trial in
+        let err = Execution.stderr trial in
+        let ex_code = Execution.exit_code trial in
         let header_str = "- Trial:" in
         let cmd_str = Printf.sprintf "- - Cmd: %s" cmd in
         let dur_str = Printf.sprintf "- - Duration: %.5f" dur in
@@ -120,10 +120,12 @@ let marshal_result r =
           | 0 -> ["- - - None captured"]
           | _ -> List.map (fun x ->
             Printf.sprintf "- - - %s" x) err in
-        let all_strs = List.flatten [[header_str]; [cmd_str]; [ex_code_str]; 
-          [out_header_str]; out_str; [err_header_str]; err_str; [dur_str]] in 
+	let all_strs = List.flatten [
+	  [header_str]; [cmd_str]; [ex_code_str]; 
+          [out_header_str]; out_str;
+	  [err_header_str]; err_str; [dur_str]] in 
         String.concat "\n" all_strs
-      ) x.Trials.executions in
+      ) (Trials.executions x) in
   let trials_ttystr = List.map Tty_str.create trials in
 
   let footer = Tty_str.create "" in

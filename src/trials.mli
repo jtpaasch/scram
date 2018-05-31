@@ -7,9 +7,9 @@ type t = {
   num_trials: int;
 }
 
-val exe : t -> Execution.t list
-val avg : t -> float
-val total : t -> float
+val executions : t -> Execution.t list
+val avg_time : t -> float
+val total_time : t -> float
 val num_trials : t -> int
 
 val last : t -> Execution.t

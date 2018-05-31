@@ -2,8 +2,16 @@
 
 exception InvalidNode of string
 
-(** Takes an AST (constructed with {!Ast.build}) and an accumulator,
-    runs all the nodes in the AST, and constructs a list of {!Result}s. *)
+(** Constructs a {!Result.t} list from a {!Node.t} list. A {!Result.t}
+    represents a {!Node.t}, after it has been executed/evaluated.
+    Effectively, this function represents the process of taking an AST
+    of {!Node.t}s, and executing/evaluating it.
+    Arguments:
+    - A {!Node.t} list (constructed with {!Ast.build}).
+    - The number of times to execute each {!Node.t}, when calculating
+      its average execution/running time.
+    - An accumulator (e.g., an empty {!Result.t} list).
+    Returns: A {!Result.t} list. *)
 let rec run ast num_trials acc =
   match ast with
   | [] -> acc

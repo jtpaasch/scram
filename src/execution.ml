@@ -8,6 +8,12 @@ type t = {
   duration: float;
 }
 
+let cmd t = t.cmd
+let stdout t = t.stdout
+let stderr t = t.stderr
+let exit_code t = t.exit_code
+let duration t = t.duration
+
 let strip_final_newline s =
   match String.length s with
   | 0 -> s
@@ -16,7 +22,6 @@ let strip_final_newline s =
     | '\n' -> String.sub s 0 (n - 1)
     | _ -> s
 
-(** Gathers the contents of an output buffer. *)
 let marshal_output buf =
   let raw_str = Ps.Buff.contents buf in
   let trimmed_str = strip_final_newline raw_str in
@@ -24,6 +29,12 @@ let marshal_output buf =
   | "" -> []
   | _ -> String.split_on_char '\n' trimmed_str
 
+(** This function runs a shell command. It captures the command's exit
+    code, stdout, stderr, and how long the command took to execute. It
+    then returns an {!Execution.t} record which contains this information.
+    Arguments:
+    - A shell command (a string) to execute in a shell.
+    Returns: an {!Execution.t} record. *)
 let run cmd =
   let start_time = Unix.gettimeofday () in
   let exit_code, out_buf, err_buf = Ps.Cmd.run cmd in

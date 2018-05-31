@@ -64,8 +64,8 @@ let rec collect_stats nodes counter acc =
       let msg = "ProfiledCode node cannot have empty trial" in
       raise (InvalidResult msg) in
     let new_counter = counter + 1 in
-    let avg = Trials.avg trials in
-    let total = Trials.total trials in
+    let avg = Trials.avg_time trials in
+    let total = Trials.total_time trials in
     let num_trials = Trials.num_trials trials in
     let line = [
       Printf.sprintf "%d" new_counter;

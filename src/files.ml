@@ -1,20 +1,20 @@
-(** A file reading utility. *)
+(** Implements {!Files}. *)
 
-
-(** [line ic] returns [Some line] from input channel [ic], or [None]. *)
 let line ic =
   try
     let result = input_line ic in
     Some result
   with End_of_file -> None
 
-(** [read ic []] reads all lines from input channel [ic]. *)
 let rec read ic acc =
   match line ic with
   | Some l -> read ic (List.append acc [l])
   | None -> acc
 
-(** [load "/path/to/file.txt"] returns a list of all lines in the file. *)
+(** Reads a file and returns its contents (as a list of lines).
+    Arguments:
+    - A path to a file (a string).
+    Returns: A string liste. *)
 let load f =
   let ic = open_in f in
   try
