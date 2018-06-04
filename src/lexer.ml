@@ -1,9 +1,7 @@
 (** Implements {!Lexer}. *)
 
-(** Pads a string on the right with extra spaces. *)
 let pad s = String.concat "" [s; "        "]
 
-(** Determines if a string contains only whitespace. *)
 let is_blank s =
   match String.trim s with
   | "" -> true
@@ -37,8 +35,8 @@ let token_of s =
     be grouped together as part of the same token, given a set of
     already matched tokens [matches]. For some {!Token_type}s, like are
     grouped with like. For instance, blank lines go together with
-    blank lines. But lines of code should have its expected output
-    grouped with it. *)
+    blank lines. But with code, the expected output should be grouped
+    with it too. *)
 let are_grouped tk_1 tk_2 matches =
   match matches with
   | [] -> true
@@ -50,29 +48,50 @@ let are_grouped tk_1 tk_2 matches =
     | Token_type.ProfiledCode -> tk_2 = Token_type.Output
     | _ -> false
 
-(** Calling [collect Token_type.Blank [] src] will go through the lines
-    of [src], collecting together lines that are instances of the token
-    type [Token_type.Blank]. When it reaches the first line that is not
-    a match, it returns the blank lines as the [matches], and it returns
-    the remaining lines as [the_rest]. *)
-let rec collect tk matches the_rest =
-  match the_rest with
-  | [] -> (matches, [])
+(** This function takes as arguments a designated {!Token_type.t}, and a 
+    list of lines (strings). Then it peels off from the front of the list
+    the zero or more lines that belong with the specified token.
+
+    For instance, if you ask this function to peel off [Token_type.Blank]
+    lines, it will peel blank line after blank line off the front of the 
+    list (if there are any), until it finds a non-blank line.
+
+    It returns a pair: a list of matched lines (if any), and a list of
+    the rest of the lines. 
+
+    Note: this function peels off all lines that should be collected
+    together under a single token, and sometimes those lines are not all
+    of the same type. For example, a [Token_type.Code] can have 
+    [Token_type.Output] lines associated with it too. The [are_grouped]
+    function above determines which lines get grouped together. *)
+let rec collect tk acc src_lines =
+  match src_lines with
+  | [] -> (acc, [])
   | hd :: tl ->
     let tk_2 = token_of hd in
-    match are_grouped tk tk_2 matches with
-    | false -> (matches, the_rest)
+    match are_grouped tk tk_2 acc with
+    | false -> (acc, src_lines)
     | true ->
-      let new_matches = List.append matches [hd] in
-      collect tk new_matches tl
+      let new_acc = List.append acc [hd] in
+      collect tk new_acc tl
 
-(** Given a list of lines [src], [tokenize src []] will break
-    the lines up into tokens and return the list of tokens. *)
-let rec tokenize src acc =
-  match src with
+(** This function takes a list of raw lines (strings) from a source,
+    and tokenizes them.
+
+    Arguments:
+    - A list of strings to tokenize (the raw source lines).
+    - An accumulator (an empty {!Token.t} list).
+
+    Returns: a {!Token.t} list.
+
+    For example, if [src_lines] is a list of lines from a file,
+    [let tokens = tokenize src_lines []] will go through the
+    [src_lines] and tokenize them, returning a {!Token.t} list. *)
+let rec tokenize src_lines acc =
+  match src_lines with
   | [] -> acc
   | hd :: tl ->
     let tk = token_of hd in
-    let matches, the_rest = collect tk [] src in
+    let matches, the_rest = collect tk [] src_lines in
     let record = Token.create tk matches in
     tokenize the_rest (List.append acc [record])

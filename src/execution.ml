@@ -32,8 +32,10 @@ let marshal_output buf =
 (** This function runs a shell command. It captures the command's exit
     code, stdout, stderr, and how long the command took to execute. It
     then returns an {!Execution.t} record which contains this information.
+
     Arguments:
     - A shell command (a string) to execute in a shell.
+
     Returns: an {!Execution.t} record. *)
 let run cmd =
   let start_time = Unix.gettimeofday () in

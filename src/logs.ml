@@ -17,7 +17,12 @@ let find key =
     Some (Hashtbl.find hash key)
   with Not_found -> None
 
-(** Close a log channel named [key]. Does nothing if there is no such log. *)
+(** Closes a named logs stream.
+
+    Arguments:
+    - The name (a string) of the log to close.
+
+    Returns: nothing. *)
 let close key =
   match find key with
   | Some oc ->
@@ -25,7 +30,18 @@ let close key =
     Hashtbl.remove hash key
   | None -> ()
 
-(** Close all registered log channels. *)
+(** This function will close all log channels that have been opened.
+    To ensure that all logs are closed when the program terminates,
+    you can register this function with [at_exit], e.g., something
+    like this in your main file:
+
+    {[
+      let () =
+        at_exit Logs.close_all;
+        main ()
+    ]}
+
+    *)
 let close_all = fun () ->
   Hashtbl.iter (fun key _ -> close key) hash
 
@@ -43,11 +59,22 @@ let channel_of target =
   | "stderr" -> Unix.out_channel_of_descr Unix.stderr
   | path -> file_out_channel path
 
-(** Create a log channel. The [key] is a name (a string) for the log,
-    and [target] is a string that specifies where to write the log,
-    which can be ["stdout"], ["stderr"], or ["/path/to/file.log"]. 
-    For instance, calling [create "verbose_log" "stdout"] will create
-    a log called [verbose_log] that writes to stdout. *)
+(** This function creates a log stream with a given name and a
+    target channel to write messages to.
+
+    Arguments:
+    - A name for the log (a string).
+    - A target to write messages to. The target must be a string,
+      but valid values are "stdout", "stderr", or a path to a file.
+      If the string is not "stdout" or "stderr," this function will
+      assume it is a file path, and try to create/open it for writing.
+
+    Returns: nothing.
+
+    Examples: [create "debug" "stderr"] will create a log stream
+    called [debug] that will write its messages to [stderr], while
+    [create "events" "/tmp/events.log"] will create a log stream
+    called [events] that write to the file [/tmp/events.log]. *)
 let create key target =
   match find key with
   | Some oc -> ()
@@ -60,11 +87,15 @@ let is_tty oc =
   let fd = Unix.descr_of_out_channel oc in
   Unix.isatty fd
 
-(** If you have created a log named [name] and a list of [Tty_str]
-    strings called [msgs], then [log "name" msgs] will send each [msg]
-    to that log. If the log is connected to a TTY, then any TTY formatting
-    will be applied to each [msg]. Otherwise, the plain string of [msg]
-    will be sent. *)
+(** Sends a list of messages to a named log stream. The messages
+    must be {!Tty_str.t} strings, so that they can be properly
+    formatted for printing if the log's target is a TTY.
+
+    Arguments:
+    - The name (a string) of the log to write to.
+    - A list of messages (i.e., a list of {!Tty_str.t} strings).
+
+    Returns: nothing. *)
 let log key ttymsgs =
   match find key with
   | Some oc ->

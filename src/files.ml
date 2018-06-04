@@ -12,8 +12,10 @@ let rec read ic acc =
   | None -> acc
 
 (** Reads a file and returns its contents (as a list of lines).
+
     Arguments:
     - A path to a file (a string).
+
     Returns: A string liste. *)
 let load f =
   let ic = open_in f in
