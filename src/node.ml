@@ -7,6 +7,23 @@ type t = {
   output : string list option;
 }
 
+
+(** Builds an AST node.
+
+    Arguments:
+    - A {!Token_type.t}.
+    - A list of strings of raw content/data (e.g., taken from
+    the source file).
+    - An optional command (a string) to execute.
+    - An optional list of lines of output the command is expected
+    to produce.
+
+    Returns: A {!Node.t} record.
+
+    Note: this is a general function for creating AST {!Node.t} records.
+    There are helper modules below that make creating particular types
+    of nodes easier. For instance, to create a node of blank lines, use
+    {!Blank.create} below. *)
 let build token data cmd output = { token; data; cmd; output }
 
 let token t = t.token
@@ -14,26 +31,31 @@ let data t = t.data
 let cmd t = t.cmd
 let output t = t.output
 
-(** Helps construct [Node_type.Blank] nodes. *)
 module Blank = struct
 
-  (** Constructs a [Blank] node. The [data] should be a list of
-      blank lines taken from a source test file. *)
+  (** Constructs a {!Token_type.t.Blank} node.
+
+      Arguments:
+      - A list of blank lines (e.g., taken from a source file).
+
+      Returns: A {!Node.t} record. *)
   let create data = build Token_type.Blank data None None
 
 end
 
-(** Helps construct [Node_type.Comment] nodes. *)
 module Comment = struct
 
-  (** Constructs a [Comment] node. The [data] should be a list of
-      comment lines taken from a source test file. *)
+  (** Constructs a {!Token_type.t.Comment} node.
+
+      Arguments:
+      - A list of commentary lines (e.g., taken from a source file).
+
+      Returns: A {!Node.t} record. *)
   let create data =
     build Token_type.Comment data None None
 
 end
 
-(** Helps construct [Node_type.Code] nodes. *)
 module Code = struct
 
   let extract_cmd s =
@@ -51,15 +73,20 @@ module Code = struct
     | hd :: [] -> (extract_cmd hd, [])
     | hd :: tl -> (extract_cmd hd, trim_prefixes tl)
 
-  (** Constructs a [Code] node. The [data] should be a list of
-      one code line taken from a source test file. *)
+  (** Constructs a {!Token_type.t.Code} node.
+
+      Arguments:
+      - A list of lines of code (e.g., taken from a source file).
+      The first line should be a command to execute.
+      The remaining lines can be lines of expected output.   
+
+      Returns: A {!Node.t} record. *)
   let create data =
     let cmd, output = process data in
     build Token_type.Code data (Some cmd) (Some output)
 
 end
 
-(** Helps construct [Node_type.ProfiledCode] nodes. *)
 module ProfiledCode = struct
 
   let extract_cmd s =
@@ -77,25 +104,43 @@ module ProfiledCode = struct
     | hd :: [] -> (extract_cmd hd, [])
     | hd :: tl -> (extract_cmd hd, trim_prefixes tl)
 
-  (** Constructs a [ProfiledCode] node. The [data] should be a list of
-      one code line taken from a source test file. *)
+  (** Constructs a {!Token_type.t.ProfiledCode} node.
+
+      Arguments:
+      - A list of lines of code (e.g., taken from a source file).
+      The first line should be a command to execute.
+      The remaining lines can be lines of expected output.   
+
+      Returns: A {!Node.t} record. *)
   let create data =
     let cmd, output = process data in
     build Token_type.ProfiledCode data (Some cmd) (Some output)
 
 end
 
-(** Helps construct [Node_type.Stats] nodes. *)
 module Stats = struct
 
+  (** Constructs a {!Token_type.t.Stats} node.
+
+      Arguments:
+      - A list of raw source lines (e.g., taken from a source file)
+      containing the [#stats] directive.
+
+      Returns: A {!Node.t} record. *)
   let create data =
     build Token_type.Stats data None None
 
 end
 
-(** Helps construct [Node_type.Diff] nodes. *)
 module Diff = struct
 
+  (** Constructs a {!Token_type.t.Diff} node.
+
+      Arguments:
+      - A list of raw source lines (e.g., taken from a source file)
+      containing the [#diff] directive.
+
+      Returns: A {!Node.t} record. *)
   let create data =
     build Token_type.Diff data None None
 
