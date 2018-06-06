@@ -12,7 +12,7 @@
 (** Raised when a result is invalid. *)
 exception InvalidResult of string
 
-(** This funtion takes two arguments: a {!Result.t} list, and a [bool]
+(** This function takes two arguments: a {!Result.t} list, and a [bool]
     indicating if those results succeeded or failed. It then generates a
     {!Tty_str.t} list.
 

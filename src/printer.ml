@@ -201,7 +201,7 @@ let test_footer success =
     Tty_str.create ~fmt:fmt (Printf.sprintf "Test: %s" pass) in
   [line_1; line_2]
 
-(** This funtion takes two arguments: a {!Result.t} list, and a [bool]
+(** This function takes two arguments: a {!Result.t} list, and a [bool]
     indicating if those results succeeded or failed. It then generates a
     {!Tty_str.t} list.
 
