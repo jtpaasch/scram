@@ -1,29 +1,41 @@
 (** The main program CLI/interface.
 
-    This program takes a file as input. It then reads the file
-    into a string of lines, which it parses as follows:
-    - It first uses the {!Lexer} module to break the source lines up
-    into tokens. E.g., it breaks up the file into chunks of blank lines,
+    This program takes a file as input. It then reads the file,
+    and executes any commands it finds in it. Finally, it prints out the
+    contents of the file (with the output/results spliced in).
+
+    If all commands in the file succeed, this program reports success.
+    If any commands do not succeed, it reports failure.
+
+    For a description of usage, see the README.md.
+
+    Processing modules:
+    - This program first uses the {!Files} module to open and read
+    the input file.
+    - Then it uses the {!Lexer} module to break the source lines
+    up into tokens. E.g., it breaks up the file into chunks of blank lines,
     commentary lines, and shell commands that can be executed.
     - It next uses the {!Ast} module to build an AST of nodes from
     the tokens. The AST is very simple: it is really just a sequence
-    of nodes.
+    of nodes. Some are blank lines nodes, some are commentary nodes,
+    and some are shell command nodes.
     - It then uses the {!Eval} module to evaluate the AST. To do this,
     it goes through the nodes in the AST, and it executes any shell
-    commands in the AST. When it executes the commands, it captures
+    command nodes in the AST. When it executes the commands, it captures
     their exit codes, stdout, stderr, and the like. It then builds
     a list of {!Result} nodes, which are basically just copies of
-    the AST nodes, decorated with the captured command output.
-    - Finally, this program walks the {!Result} nodes and prints the
-    data to the screen.
+    the AST nodes, decorated with any captured command output.
+    - Finally, the {!Printer} module walks the {!Result} nodes and
+    constructs a pretty-printable version of the data. The program
+    prints that to the screen.
 
-    Primary modules:
+    Data modules:
     - {!Token_type}: these are the types of tokens the {!Lexer} can
     identify in source files.
     - {!Token}: these represent concrete tokens that the {!Lexer} finds
     in a source file.
-    - {!Node}: these are AST nodes that the {!Ast} module builds from
-    {!Token}s.
+    - {!Node}: these represent AST nodes that the {!Ast} module builds
+    from {!Token}s.
     - {!Result}: these represent the AST nodes, after they have been
     executed/evaluated. As noted already, they are basically just copies
     of {!Node}s, but they are decorated with any output captured from
@@ -41,6 +53,8 @@
     When it does so, it runs the command a number of times, and then
     calculates the average running time. The average time, and the trials,
     are all handled by this {!Trials} module.
+    - A few [*_printer] modules, which generate pretty-printable versions
+    of tokens, nodes, and results.
 
     Some utilities:
     - The {!Logs} module provides logging functions.
@@ -51,6 +65,16 @@
     need to be printed to a TTY.
     - The {!Tty_table} module provides a way to format a list of
     strings into a TTY-printable table.
+
+    Logs:
+    - Main log: the primary output of the program is sent here. By
+    default, this log writes to stdout.
+    - Error log: errors are sent here. By default this log writes to stderr.
+    - Verbose log: detailed information about all processing goes here.
+    By default, this log writes to /dev/null.
+    - The target of these logs can be changed through command line
+    arguments. For instance, the verbose log can be sent to stdout,
+    or the main log can be sent to a file.
 
 *)
 
