@@ -1,3 +1,5 @@
+(** Implements {!Ps}. *)
+
 module Proc = struct
 
   let int_of_status s =
@@ -52,10 +54,25 @@ module Buff = struct
 
   let create ch len = (ch, Buffer.create len)
 
+  (** Returns a copy of the contents of a buffer (as a string).
+
+      Arguments:
+      - A pair [(in_channel, buf)], where [in_channel] is an
+      in_channel, and [buf] is a standard buffer, [Buffer.t].
+
+      Returns: a copy of the string contents of [buf]. *)
   let contents b =
     let buf = snd(b) in
     Buffer.contents buf
 
+  (** Transfers everything from an in_channel to a buffer.
+
+      Arguments:
+      - A pair [(in_channel, buf)], where [in_channel] is an
+      in_channel, and [buf] is a standard buffer, [Buffer.t].
+
+      Returns: Nothing. After this function is called,
+      the provided [buf] is populated with data from the channel. *)
   let read b =
     let ch = fst(b) and buf = snd(b) in
     try
@@ -83,6 +100,19 @@ module Cmd = struct
   let collect out_buf err_buf =
     Buff.read out_buf; Buff.read err_buf
 
+  (** Runs a command in a shell, returns the exit code, stdout, and stderr.
+
+      Arguments:
+      - A string (the command to execute in the shell)
+
+      Returns: a triple composed of:
+      - The exit code (an int)
+      - A "buffer" (which is actually a pair of [(in_channel, Buffer.t)])
+      that contains the command's stdout. The contents can be retrieved
+      with {!Buff.contents}.
+      - A "buffer" (which is actually a pair of [(in_channel, Buffer.t)])
+      that contains the command's stderr. The contents can be retrieved
+      with {!Buff.contents}. *)
   let run cmd =
     let pid, stdout_ch, stderr_ch = Proc.popen cmd in
     let out_buf = Buff.create stdout_ch 80 in
