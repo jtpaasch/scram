@@ -3,11 +3,15 @@
     {t.ttyfmt} format. For example, to make a string "Some text"
     with a red color:
 
-    {[  let msg = Tty_str.create ~fmt:Red "Some text.";; ]}
+    {[
+      let msg = Tty_str.create "some text" ~fmt:Red;;
+    ]}
 
     When you're ready to use this as a string, convert it to a string:
 
-    {[  let msg_str = Tty_str.string_of ~for_tty:true msg;; ]}
+    {[
+      let msg_str = Tty_str.string_of msg ~for_tty:true;;
+    ]}
 
     That will generate a string, with the proper ASCII formatting tags
     inserted at the beginning and end of the string. You can print
@@ -15,8 +19,8 @@
 
     If you leave off [~for_tty:true] (or specify [~for_tty:false]), then
     it will not have any ASCII formatting tags inserted into it. If you
-    print it (even in a TTY), it will just be the plain string "Some text",
-    without any red color. *)
+    print the resulting string (even in a TTY), it will just be the plain
+    string "Some text", without any red color. *)
 
 (** The different formatting options. *)
 type ttyfmt =

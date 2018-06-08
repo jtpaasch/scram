@@ -1,7 +1,4 @@
-(* A utility for building a table that can be printed on a TTY.
-   Use it by calling [create], and passing it a list of string lists.
-   The argument is a list of rows, where each row is a list of strings.
-   The [create] function returns a string you can print to a TTY. *)
+(** Implements {!Tty_table}. *)
 
 let rec range n acc =
   let len = List.length acc in
@@ -69,6 +66,13 @@ let build_lines idxs widths rows =
   let all_lines = List.flatten rows in
   List.append all_lines [border]
 
+(** Takes a list of rows (each row is a list of strings).
+    Returns the table as a list of strings.
+
+    Arguments:
+    - A list of rows (a list of string list).
+
+    Returns: a list of strings. *)
 let create rows =
   let num_cols = width rows in
   let idxs = range num_cols [] in

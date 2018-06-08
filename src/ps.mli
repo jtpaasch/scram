@@ -2,22 +2,30 @@
 
 (** As an example, you can run the command [echo hello]:
 
-    {[  Cmd.run "echo hello";; ]}
+    {[
+      Cmd.run "echo hello";;
+    ]}
 
     The [Cmd.run] function returns a triple: an exit code,
     a stdout buffer, and a stderr buffer.
 
-    {[  let code, out_buf, err_buf = Cmd.run "echo hello";; ]}
+    {[
+      let code, out_buf, err_buf = Cmd.run "echo hello";;
+    ]}
 
     The exit code is an integer.
 
-    {[  Printf.printf "Exit code: %d\n%!" code;; ]}
+    {[
+      Printf.printf "Exit code: %d\n%!" code;;
+    ]}
 
     Each of the buffers can be read with [Buff.contents]. For example:
 
-    {[  Printf.printf "Stdout: %s\n%!" (Buff.contents out_buff);; ]}
+    {[
+      Printf.printf "Stdout: %s\n%!" (Buff.contents out_buff);;
+    ]}
 
-    *)
+*)
 
 (** A module that wraps stdout/stderr collected by {!Cmd.run}. *)
 module Buff : sig

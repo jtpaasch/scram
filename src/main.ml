@@ -1,13 +1,61 @@
 (** The main program CLI/interface.
 
-    This program takes a file as input. It then reads the file,
-    and executes any commands it finds in it. Finally, it prints out the
-    contents of the file (with the output/results spliced in).
+    This program takes a file (like a README.md file) as input. It reads
+    the file, and executes any shell commands it finds in it. Finally,
+    it prints out the contents of the file, with the output/results of
+    the commands pasted in.
 
-    If all commands in the file succeed, this program reports success.
-    If any commands do not succeed, it reports failure.
+    If all commands in the file succeed, it reports success. If any
+    commands do not succeed, it reports failure.
 
-    For a description of usage, see the README.md.
+    For example, suppose you have a README.md file with these contents:
+
+    {[
+      Here are some examples of bash commands.
+
+      First, print a message to the screen:
+
+        $ echo hello world
+
+      That should print the words "hello world" on the next line:
+
+        $ echo hello world
+        hello world
+
+      That is the end of the examples.
+    ]}
+
+    If you run this program on that file, it will read the file,
+    execute the shell commands in it, and print out something
+    like this:
+
+    {[
+      ========================================
+      Test 'README.md'
+      ----------------------------------------
+      Here are some examples of bash commands.
+
+      First, print a message to the screen:
+
+        $ echo hello world
+	1> hello world
+	[0]
+	==> OK (Exited with a 0 exit code)
+
+      That should print the words "hello world" on the next line:
+
+        $ echo hello world
+        hello world
+	1> hello again
+	[0]
+	==> OK (Output was as expected)
+	
+      That is the end of the examples.
+      ========================================
+      Test: PASSED
+    ]}
+    
+    For a fuller description of usage, see the README.md.
 
     Processing modules:
     - This program first uses the {!Files} module to open and read
@@ -45,16 +93,15 @@
     - {!Matcher}: A simple module that helps match strings literally
     and with regular expressions.
     - {!Success}: this packages the success (a boolean) of a command
-    with the reason why (a string) it succeeded or failed.
-    - {!Execution}: this packages up information about the execution
-    of a shell command, e.g., it includes its stdout, stderr, exit code,
-    and running/execution time.
-    - {!Trials}: this program can profile the execution time of a command.
-    When it does so, it runs the command a number of times, and then
-    calculates the average running time. The average time, and the trials,
-    are all handled by this {!Trials} module.
-    - A few [*_printer] modules, which generate pretty-printable versions
-    of tokens, nodes, and results.
+    with the reason why it succeeded or failed.
+    - {!Execution}: this executes shell commands, and packages up
+    information about the execution (like the exit code, stdout/stderr).
+    - {!Trials}: this module profiles the execution time of a command.
+    To do this, it runs the command a number of times, and then
+    calculates the average running time. The average time, and the
+    execution trials, are all packed up by this module.
+    - There are a few [*_printer] modules, which generate pretty-printable
+    versions of tokens, nodes, and results.
 
     Some utilities:
     - The {!Logs} module provides logging functions.
