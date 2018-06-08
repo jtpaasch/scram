@@ -19,7 +19,7 @@
 
     *)
 
-(** A helper for moving data from an [in_channel] to a [Buffer]. *)
+(** A module that wraps stdout/stderr collected by {!Cmd.run}. *)
 module Buff : sig
 
   (** Transfers everything from an in_channel to a buffer.
@@ -67,7 +67,7 @@ module Cmd : sig
       that contains the command's stderr. The contents can be retrieved
       with {!Buff.contents}.
 
-      See the top of the file for usage examples. *)
+      See {!Ps} for usage examples. *)
   val run : string -> int * (in_channel * Buffer.t) * (in_channel * Buffer.t)
 
 end

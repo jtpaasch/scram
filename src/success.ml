@@ -12,6 +12,13 @@ type t = {
   reason: status;
 }
 
+(** Creates a {!Success.t} record.
+
+    Arguments:
+    - A [bool] indicating success or failure.
+    - A [status] status.
+
+    Returns: a {!Success.t} record. *)
 let create passed reason = { passed; reason }
 
 let is_successful t = t.passed
@@ -35,7 +42,16 @@ let check_output output out err =
   let stderr_is_match = Matcher.cmp expected_output actual_stderr in
   stdout_is_match || stderr_is_match
 
-(** Check if the code is successful. *)
+(** Check if a command is successful, and return a {!Success.t}
+    record representing that.
+
+    Arguments:
+    - The exit code (an int) of a command.
+    - Any expected output (a list of zero or more strings).
+    - Any captured stdout from the command (a list of zero or more strings).
+    - Any captured stderr from the command (a list of zero or more strings).
+
+    Returns: a {!Success.t} record. *)
 let get_success exit_code output out err =
   match exit_code = 0 with
   | false -> create false NonZeroExit
