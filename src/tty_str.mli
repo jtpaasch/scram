@@ -11,11 +11,12 @@
 
     That will generate a string, with the proper ASCII formatting tags
     inserted at the beginning and end of the string. You can print
-    this in a TTY, and it will display red.
+    this in a TTY, and it will display red. 
 
-    If you leave off [~for_tty:true] (or specify [~for_tty:false]),
-    then the string will not have any ASCII formatting tags inserted
-    into it. It will just be the plain string "Some text". *)
+    If you leave off [~for_tty:true] (or specify [~for_tty:false]), then
+    it will not have any ASCII formatting tags inserted into it. If you
+    print it (even in a TTY), it will just be the plain string "Some text",
+    without any red color. *)
 
 (** The different formatting options. *)
 type ttyfmt =
@@ -32,14 +33,28 @@ type ttyfmt =
     (the [data] field) and a format (the [fmt] field). *)
 type t = { fmt : ttyfmt; data: string }                                      
 
-(** Creates a [Tty_str] record. Here are some examples:
+(** Creates a [Tty_str] record. 
+
+    Arguments:
+    - [?fmt:ttyfmt] - An optional format from the [ttyfmt] type above.
+    - The string to represent.
+
+    Returns: a {!Tty_str.t}. 
+
+    Here are some examples:
     - [create "A plain string"]
     - [create ~fmt:Red "A red string"]
     - [create ~fmt:Bold "A bold string"] *)
 val create : ?fmt:ttyfmt -> string -> t
 
-(** Constructs a string from a [Tty_str] object. If you specify
-    [~for_tty:true], then the appropriate ASCII formatting tags
-    will be inserted into the final string. Otherwise, no ASCII
-    tags are inserted into the result. *)
+(** Constructs a string from a [Tty_str] object. 
+
+    Arguments:
+    - [?for_tty:bool] - Indicates whether the string is meant for a TTY.
+    If so, the appropriate ASCII formatting tags are inserted into
+    the returned string. Otherwise, no ASCII tags are inserted, and the
+    returned string is just the plain string. 
+    - A {!Tty_str.t} string to generate a string from. 
+
+    Returns: a string that can be printed in a TTY or other target. *)
 val string_of : ?for_tty:bool -> t -> string

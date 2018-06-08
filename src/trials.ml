@@ -43,6 +43,13 @@ let rec do_executions cmd counter acc =
     end
   | false -> acc
 
+(** Run/create a {!Trials.t} record.
+
+    Arguments:
+    - A command (a string) to execute in a shell.
+    - The number of times (int) to run the command.
+
+    Returns: a {!Trials.t} record. *)
 let run cmd num_trials =
   let executions = do_executions cmd num_trials [] in
   let total_time = calc_total executions in

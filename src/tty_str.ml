@@ -28,8 +28,25 @@ let end_of fmt =
   | Plain -> ""
   | _ -> "\x1b[0m"
 
+(** Creates a [Tty_str] record.
+
+    Arguments:
+    - [?fmt:ttyfmt] - An optional format from the [ttyfmt] typeabove.
+    - The string to represent.
+
+    Returns: a {!Tty_str.t}. *)
 let create ?(fmt = Plain) data = { fmt; data }                               
 
+(** Constructs a string from a [Tty_str] object.
+
+    Arguments:
+    - [?for_tty:bool] - Indicates whether the string is meant for a TTY.
+    If so, the appropriate ASCII formatting tags are inserted into
+    the returned string. Otherwise, no ASCII tags are inserted, and the
+    returned string is just the plain string.
+    - A {!Tty_str.t} string to generate a string from.
+
+    Returns: a string that can be printed in a TTY or other target. *)
 let string_of ?(for_tty = false) t =
   let start_tag =
     match for_tty with
