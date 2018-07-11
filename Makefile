@@ -25,20 +25,24 @@ $(build_dir):
 	$(compiler) -I $(build_dir) -c build/tty_table.ml
 	$(compiler) -I $(build_dir) -c build/logs.mli
 	$(compiler) -I $(build_dir) -c build/logs.ml
-	$(compiler) -I $(build_dir) -c build/ps.mli
-	$(compiler) -I $(build_dir) -c build/ps.ml
-	$(compiler) -I $(build_dir) -c build/matcher.mli
-	$(compiler) -I $(build_dir) -c build/matcher.ml
 	$(compiler) -I $(build_dir) -c build/files.mli
 	$(compiler) -I $(build_dir) -c build/files.ml
 	$(compiler) -I $(build_dir) -c build/file_printer.mli
 	$(compiler) -I $(build_dir) -c build/file_printer.ml
+	$(compiler) -I $(build_dir) -c build/ps.mli
+	$(compiler) -I $(build_dir) -c build/ps.ml
+	$(compiler) -I $(build_dir) -c build/matcher.mli
+	$(compiler) -I $(build_dir) -c build/matcher.ml
 	$(compiler) -I $(build_dir) -c build/execution.mli
 	$(compiler) -I $(build_dir) -c build/execution.ml
+	$(compiler) -I $(build_dir) -c build/execution_printer.mli
+	$(compiler) -I $(build_dir) -c build/execution_printer.ml
 	$(compiler) -I $(build_dir) -c build/success.mli
 	$(compiler) -I $(build_dir) -c build/success.ml
 	$(compiler) -I $(build_dir) -c build/trials.mli
 	$(compiler) -I $(build_dir) -c build/trials.ml
+	$(compiler) -I $(build_dir) -c build/trials_printer.mli
+	$(compiler) -I $(build_dir) -c build/trials_printer.ml
 	$(compiler) -I $(build_dir) -c build/token_type.mli
 	$(compiler) -I $(build_dir) -c build/token_type.ml
 	$(compiler) -I $(build_dir) -c build/token.mli
@@ -62,9 +66,59 @@ $(build_dir):
 	$(compiler) -I $(build_dir) -c build/printer.mli
 	$(compiler) -I $(build_dir) -c build/printer.ml
 	$(compiler) -I $(build_dir) -c build/main.ml
-	$(compiler) -I $(build_dir) -o bin/$(exe_name) unix.$(libextension) str.$(libextension) tty_str.$(objextension) tty_table.$(objextension) logs.$(objextension) ps.$(objextension) matcher.$(objextension) files.$(objextension) file_printer.$(objextension) execution.$(objextension) trials.$(objextension) success.$(objextension) token_type.$(objextension) token.$(objextension) token_printer.$(objextension) lexer.$(objextension) node.$(objextension) node_printer.$(objextension) ast.$(objextension) result.$(objextension) result_printer.$(objextension) eval.$(objextension) printer.$(objextension) main.$(objextension)
+	$(compiler) -I $(build_dir) -o bin/$(exe_name) \
+		unix.$(libextension) \
+		str.$(libextension) \
+		tty_str.$(objextension) \
+		tty_table.$(objextension) \
+		logs.$(objextension) \
+		files.$(objextension) \
+		file_printer.$(objextension) \
+		ps.$(objextension) \
+		matcher.$(objextension) \
+		execution.$(objextension) \
+		execution_printer.$(objextension) \
+		trials.$(objextension) \
+		trials_printer.$(objextension) \
+		success.$(objextension) \
+		token_type.$(objextension) \
+		token.$(objextension) \
+		token_printer.$(objextension) \
+		lexer.$(objextension) \
+		node.$(objextension) \
+		node_printer.$(objextension) \
+		ast.$(objextension) \
+		result.$(objextension) \
+		result_printer.$(objextension) \
+		eval.$(objextension) \
+		printer.$(objextension) \
+		main.$(objextension)
 
 docs: $(build_dir)
 	rm -rf docs
 	mkdir -p docs
-	ocamldoc -html -I $(build_dir) -d docs build/tty_str.mli build/tty_table.mli build/logs.mli build/ps.mli build/matcher.mli build/files.mli build/file_printer.mli build/execution.mli build/trials.mli build/success.mli build/token_type.mli build/token.mli build/token_printer.mli build/lexer.mli build/node.mli build/node_printer.mli build/ast.mli build/result.mli build/result_printer.mli build/eval.mli build/printer.mli build/main.ml
+	ocamldoc -html -I $(build_dir) -d docs \
+		build/tty_str.mli \
+		build/tty_table.mli \
+		build/logs.mli \
+		build/ps.mli \
+		build/matcher.mli \
+		build/files.mli \
+		build/file_printer.mli \
+		build/execution.mli \
+		build/execution_printer.mli \
+		build/trials.mli \
+		build/trials_printer.mli \
+		build/success.mli \
+		build/token_type.mli \
+		build/token.mli \
+		build/token_printer.mli \
+		build/lexer.mli \
+		build/node.mli \
+		build/node_printer.mli \
+		build/ast.mli \
+		build/result.mli \
+		build/result_printer.mli \
+		build/eval.mli \
+		build/printer.mli \
+		build/main.ml

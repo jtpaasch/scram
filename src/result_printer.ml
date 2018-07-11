@@ -69,25 +69,6 @@ let marshal_result r =
   let success = Printf.sprintf "Test result: %s (%s)" pass reason in
   let success_ttystr = Tty_str.create success in
 
-  let profile_header =
-    match Result.trials r with
-    | None -> "Profile: N/a"
-    | Some x -> "Profile:" in
-  let profile_header_ttystr = Tty_str.create profile_header in
-
-  let profile =
-    match Result.trials r with
-    | None -> []
-    | Some x ->
-      let count = Trials.num_trials x in
-      let total = Trials.total_time x in
-      let avg = Trials.avg_time x in
-      let num_trials = Printf.sprintf "- Num trials: %d" count in
-      let total = Printf.sprintf "- Total time: %.4f secs" total in
-      let avg = Printf.sprintf "- Avg time: %.4f secs" avg in
-      [num_trials; total; avg] in
-  let profile_ttystrs = List.map Tty_str.create profile in
-
   let trials_header = 
     match Result.trials r with
     | None -> "Trials: N/a"
@@ -97,42 +78,13 @@ let marshal_result r =
   let trials =
     match Result.trials r with
     | None -> []
-    | Some x ->
-      List.map (fun trial ->
-        let cmd = Execution.cmd trial in
-        let dur = Execution.duration trial in
-        let out = Execution.stdout trial in
-        let err = Execution.stderr trial in
-        let ex_code = Execution.exit_code trial in
-        let header_str = "- Trial:" in
-        let cmd_str = Printf.sprintf "- - Cmd: %s" cmd in
-        let dur_str = Printf.sprintf "- - Duration: %.5f" dur in
-        let ex_code_str = Printf.sprintf "- - Exit code: %d" ex_code in
-        let out_header_str = "- - Stdout:" in
-        let out_str =
-          match List.length out with
-          | 0 -> ["- - - None captured"]
-          | _ -> List.map (fun x ->
-            Printf.sprintf "- - - %s" x) out in
-        let err_header_str = "- - Stderr:" in
-        let err_str =
-          match List.length err with
-          | 0 -> ["- - - None captured"]
-          | _ -> List.map (fun x ->
-            Printf.sprintf "- - - %s" x) err in
-	let all_strs = List.flatten [
-	  [header_str]; [cmd_str]; [ex_code_str]; 
-          [out_header_str]; out_str;
-	  [err_header_str]; err_str; [dur_str]] in 
-        String.concat "\n" all_strs
-      ) (Trials.executions x) in
+    | Some x -> Trials_printer.pprint x in
   let trials_ttystr = List.map Tty_str.create trials in
 
   let footer = Tty_str.create "" in
   List.flatten [[tk_type_ttystr]; [lines_header]; lines_ttystrs;
     [cmd_ttystr]; [output_header]; output_ttystrs; [stdout_header];
     stdout_ttystrs; [stderr_header]; stderr_ttystrs; [exit_code_ttystr];
-    [profile_header_ttystr]; profile_ttystrs; 
     [trials_header_ttystr]; trials_ttystr; 
     [success_ttystr]; [footer]]
 

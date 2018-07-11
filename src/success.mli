@@ -11,10 +11,7 @@ type status =
 (** A {!Success.t} record carries with it two things:
     - A [bool] indicating whether its success or failure.
     - A [status] indicating why it succeeded or failed. *)
-type t = {
-  passed: bool;
-  reason: status;
-}
+type t
 
 (** Creates a {!Success.t} record.
 

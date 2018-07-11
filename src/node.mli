@@ -4,12 +4,7 @@
     (a list of strings from the source file), an optional [cmd] (a string
     to execute in a shell), and some optional expected [output] (a list
     of strings that the [cmd] is expected to produce as output). *)
-type t = {
-  token : Token_type.t;
-  data : string list;
-  cmd : string option;
-  output : string list option;
-}
+type t
 
 (** Builds an AST node.
 

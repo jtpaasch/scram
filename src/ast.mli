@@ -15,4 +15,3 @@ exception InvalidToken of string
     {!Lexer.tokenize}, construct an AST from it with:
     [let nodes = build tokens []]. *)
 val build : Token.t list -> Node.t list -> Node.t list
-

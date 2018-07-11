@@ -35,7 +35,7 @@ type ttyfmt =
 
 (** Each [Tty_str] record carries with it the string contents
     (the [data] field) and a format (the [fmt] field). *)
-type t = { fmt : ttyfmt; data: string }                                      
+type t
 
 (** Creates a [Tty_str] record. 
 

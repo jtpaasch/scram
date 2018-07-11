@@ -11,7 +11,7 @@
 (** A {!Token.t} carries with it the type of token it is
     (the {!Token_type}), and its raw contents/data (a list of lines
     taken from a source file). *)
-type t = { token : Token_type.t; data : string list }
+type t
 
 (** Creates a {!Token.t} record.
 

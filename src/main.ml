@@ -194,7 +194,7 @@ let main () =
   (** Read the source file. *)
   let src =
     try
-      Files.load !src_file
+      Files.to_lines !src_file
     with _ ->
       let msg =
         Printf.sprintf "Error: couldn't open '%s'. See '%s --help'."

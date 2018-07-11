@@ -71,11 +71,24 @@ let rec collect_stats nodes counter acc =
     let avg = Trials.avg_time trials in
     let total = Trials.total_time trials in
     let num_trials = Trials.num_trials trials in
+    let num_stats = Trials.avg_num_stat_collections trials in
+    let avg_rss = Trials.avg_rss trials in
+    let avg_min_rss = Trials.avg_min_rss trials in
+    let avg_max_rss = Trials.avg_max_rss trials in
+    let min_rss = Trials.min_rss trials in
+    let max_rss = Trials.max_rss trials in
+
     let line = [
       Printf.sprintf "%d" new_counter;
       Printf.sprintf "%.4f" avg;
       Printf.sprintf "%.4f" total;
       Printf.sprintf "%d" num_trials;
+      Printf.sprintf "%d" num_stats;
+      Printf.sprintf "%d" avg_rss;
+      Printf.sprintf "%d" avg_min_rss;
+      Printf.sprintf "%d" avg_max_rss;
+      Printf.sprintf "%d" min_rss;
+      Printf.sprintf "%d" max_rss;
     ] in
     let new_acc = List.append acc [line] in
     collect_stats tl new_counter new_acc
@@ -85,7 +98,11 @@ let lines_of_stats r processed =
     List.map (Tty_str.create ~fmt:Tty_str.Bold) (Result.data r) in
   let profiled_nodes = get_profiled_nodes processed in
   let stats = collect_stats profiled_nodes 0 [] in
-  let header_col = ["Id"; "Avg time"; "Total time"; "Num trials"] in
+  let header_col = [
+    "Id"; "Avg time"; "Total time"; "Trials";
+    "Avg # Stats"; "Avg RSS"; "Avg min RSS"; "Avg max RSS";
+    "Min RSS"; "Max RSS";
+    ] in
   let rows = List.append [header_col] stats in
   let table_rows = Tty_table.create rows in
   let tty_table_rows =

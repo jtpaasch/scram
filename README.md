@@ -4,11 +4,19 @@
 
 It is inspired by cram tests, hence the name.
 
+## Requirements
+
+* OCaml 4.05+
+
+If you don't have OCaml on your system, run bash in a docker container that does. For instance:
+
+  $ docker run --rm -ti -v $(pwd):/srv -w /srv ocaml/opam:ubuntu-16.04_ocaml-4.06.0 bash
+
 
 ## Quick start
 
-Build the tool (assuming you have OCaml 4.05+), and then
-use it to check the sample markdown file [example.md](https://raw.githubusercontent.com/jtpaasch/scram/master/example.md).
+Build the tool, and then use it to check the sample markdown file 
+[example.md](example.md).
 
 ```
 git clone [this-repo]
@@ -17,7 +25,7 @@ make
 bin/scram example.md
 ```
 
-The file [example.md](https://raw.githubusercontent.com/jtpaasch/scram/master/example.md) describes all cases `scram` covers.
+The file [example.md](example.md) describes all cases `scram` covers.
 
 More detailed explanation/examples come next.
 
