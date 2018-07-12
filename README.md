@@ -10,7 +10,9 @@ It is inspired by cram tests, hence the name.
 
 If you don't have OCaml on your system, run bash in a docker container that does. For instance:
 
-  $ docker run --rm -ti -v $(pwd):/srv -w /srv ocaml/opam:ubuntu-16.04_ocaml-4.06.0 bash
+```
+$ docker run --rm -ti -v $(pwd):/srv -w /srv ocaml/opam:ubuntu-16.04_ocaml-4.06.0 bash
+```
 
 
 ## Quick start
@@ -319,7 +321,7 @@ Echo two lines again:
 
  *$ echo "Lorem ipsum" && echo "sit dolor"
 
-Print info about how long these commands take to run:
+Print profiling statistics:
 
   #stats
 
@@ -353,16 +355,16 @@ Echo two lines again:
   [0]
   ==> OK (Exited with a 0 exit code)
 
-Print info about how long these commands take to run:
+Print profiling statistics:
 
   #stats
-  +----+----------+------------+------------+
-  | Id | Avg time | Total time | Num trials |
-  +----+----------+------------+------------+
-  | 1  | 0.2514   | 1.2569     | 5          |
-  +----+----------+------------+------------+
-  | 2  | 0.2511   | 1.2553     | 5          |
-  +----+----------+------------+------------+
+  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+  | Id | Avg time | Total time | Trials | Avg # Stats | Avg RSS | Avg min RSS | Avg max RSS | Min RSS | Max RSS |
+  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+  | 1  | 0.2509   | 1.2547     | 5      | 1           | 609     | 609         | 609         | 4       | 792     |
+  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+  | 2  | 0.2515   | 1.2576     | 5      | 1           | 518     | 518         | 518         | 4       | 904     |
+  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
 
 ========================================
 Test: PASSED
@@ -385,7 +387,7 @@ Echo two lines again:
 
  *$ echo "Lorem ipsum" && echo "sit dolor"
 
-Print info about how long these commands take to run:
+Print profiling statistics:
 
   #stats
 
@@ -423,16 +425,16 @@ Echo two lines again:
   [0]
   ==> OK (Exited with a 0 exit code)
 
-Print info about how long these commands take to run:
+Print profiling statistics:
 
   #stats
-  +----+----------+------------+------------+
-  | Id | Avg time | Total time | Num trials |
-  +----+----------+------------+------------+
-  | 1  | 0.2514   | 1.2569     | 5          |
-  +----+----------+------------+------------+
-  | 2  | 0.2511   | 1.2553     | 5          |
-  +----+----------+------------+------------+
+  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+  | Id | Avg time | Total time | Trials | Avg # Stats | Avg RSS | Avg min RSS | Avg max RSS | Min RSS | Max RSS |
+  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+  | 1  | 0.2509   | 1.2547     | 5      | 1           | 609     | 609         | 609         | 4       | 792     |
+  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+  | 2  | 0.2515   | 1.2576     | 5      | 1           | 518     | 518         | 518         | 4       | 904     |
+  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
 
 Show the different output:
 
