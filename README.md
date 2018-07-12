@@ -4,6 +4,7 @@
 
 It is inspired by cram tests, hence the name.
 
+
 ## Requirements
 
 * OCaml 4.05+
@@ -454,8 +455,8 @@ Test: PASSED
 
 ## Summary of syntax
 
-* `scram` sees any empty line, any line with one or more whitespace 
-  characters, as a blank line.
+* `scram` sees any empty line, or any line that consists only of
+  whitespace characters, as a blank line.
 * `scram` sees any fully left-justified lines as commentary.
 * `scram` identifies commands by looking exactly for strings
   that follow four spaces, a dollar sign, and another space,
@@ -474,6 +475,12 @@ Test: PASSED
 ## Build and install
 
 To build and install, you need OCaml 4.05+.
+
+If you don't have OCaml on your system, run bash in a docker container that does. For instance:
+
+```
+$ docker run --rm -ti -v $(pwd):/srv -w /srv ocaml/opam:ubuntu-16.04_ocaml-4.06.0 bash
+```
 
 Clone the repo, then from the root of the repo:
 
