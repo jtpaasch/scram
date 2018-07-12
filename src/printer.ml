@@ -19,7 +19,7 @@ let lines_of_code r =
     | None -> []
     | Some x ->
       List.map (fun s ->
-        let msg = Printf.sprintf "  1> %s" s in
+        let msg = Printf.sprintf "    1> %s" s in
 	Tty_str.create msg
       ) x
     in
@@ -28,7 +28,7 @@ let lines_of_code r =
     | None -> []
     | Some x ->
       List.map (fun s ->
-        let msg = Printf.sprintf "  2> %s" s in
+        let msg = Printf.sprintf "    2> %s" s in
 	Tty_str.create msg
       ) x
     in
@@ -36,7 +36,7 @@ let lines_of_code r =
     match Result.exit_code r with
     | None -> raise (InvalidResult "Exit code cannot be empty")
     | Some x ->
-      let msg = Printf.sprintf "  [%d]" x in
+      let msg = Printf.sprintf "    [%d]" x in
       let msg_ttystr = Tty_str.create msg in
       [msg_ttystr] in
   let is_success = Success.is_successful (Result.success r) in
@@ -45,7 +45,7 @@ let lines_of_code r =
     | (true, stat) -> (Tty_str.Green, "OK", Success.string_of_why stat)
     | (false, stat) -> (Tty_str.Red, "FAILED", Success.string_of_why stat)
     in
-  let msg = Printf.sprintf "  ==> %s (%s)" pass reason in
+  let msg = Printf.sprintf "    ==> %s (%s)" pass reason in
   let msg_ttystr = Tty_str.create ~fmt:fmt msg in
   let pass_str = [msg_ttystr] in
   List.flatten [raw_data; out; err; exit_code; pass_str]
@@ -80,15 +80,15 @@ let rec collect_stats nodes counter acc =
 
     let line = [
       Printf.sprintf "%d" new_counter;
-      Printf.sprintf "%.4f" avg;
-      Printf.sprintf "%.4f" total;
+      Printf.sprintf "%.4fs" avg;
+      Printf.sprintf "%.4fs" total;
       Printf.sprintf "%d" num_trials;
       Printf.sprintf "%d" num_stats;
-      Printf.sprintf "%d" avg_rss;
-      Printf.sprintf "%d" avg_min_rss;
-      Printf.sprintf "%d" avg_max_rss;
-      Printf.sprintf "%d" min_rss;
-      Printf.sprintf "%d" max_rss;
+      Printf.sprintf "%dKb" avg_rss;
+      Printf.sprintf "%dKb" avg_min_rss;
+      Printf.sprintf "%dKb" avg_max_rss;
+      Printf.sprintf "%dKb" min_rss;
+      Printf.sprintf "%dKb" max_rss;
     ] in
     let new_acc = List.append acc [line] in
     collect_stats tl new_counter new_acc
@@ -107,7 +107,7 @@ let lines_of_stats r processed =
   let table_rows = Tty_table.create rows in
   let tty_table_rows =
     List.map (fun s ->
-      Tty_str.create (Printf.sprintf "  %s" s)
+      Tty_str.create (Printf.sprintf "    %s" s)
     ) table_rows in 
   List.append header tty_table_rows
 
@@ -151,7 +151,7 @@ let lines_of_diff r processed =
   let lines = collect_output profiled_nodes 0 [] in
   let all_lines = List.append lines [""] in
   let tty_lines =
-    List.map (fun s -> Tty_str.create (Printf.sprintf "  %s" s)) all_lines in
+    List.map (fun s -> Tty_str.create (Printf.sprintf "    %s" s)) all_lines in
   List.append header tty_lines
 
 let rec build_result nodes processed acc =

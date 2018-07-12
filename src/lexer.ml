@@ -13,21 +13,21 @@ let token_of s =
   | true -> Token_type.Blank
   | false ->
     let padded_s = pad s in
-    let fst_three = String.sub padded_s 0 3 in
-    match fst_three with
-    | " *$" -> Token_type.ProfiledCode
+    let fst_seven = String.sub padded_s 0 7 in
+    match fst_seven with
+    | "    *$ " -> Token_type.ProfiledCode
     | _ ->
-      let fst_two = String.sub padded_s 0 2 in
-      match is_blank fst_two with
+      let fst_four = String.sub padded_s 0 4 in
+      match is_blank fst_four with
       | false -> Token_type.Comment
       | true ->
-        match String.sub padded_s 2 6 = "#stats" with
+        match String.sub padded_s 4 6 = "#stats" with
         | true -> Token_type.Stats
         | false ->
-          match String.sub padded_s 2 5 = "#diff" with
+          match String.sub padded_s 4 5 = "#diff" with
           | true -> Token_type.Diff
           | false ->
-            match String.sub padded_s 2 2 with
+            match String.sub padded_s 4 2 with
             | "$ " -> Token_type.Code
             | _ -> Token_type.Output
 

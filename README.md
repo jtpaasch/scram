@@ -42,11 +42,11 @@ Something like this:
 ```
 To print something to stdout, run the `echo` command:
 
-  $ echo hello world
+    $ echo hello world
 
 To print another message, try this:
 
-  $ echo goodbye
+    $ echo goodbye
 
 ```
 
@@ -65,17 +65,17 @@ Test 'README.md'
 ----------------------------------------
 To print something to stdout, run the `echo` command:
 
-  $ echo hello world
-  1> hello world
-  [0]
-  ==> OK (Exited with a 0 exit code)
+    $ echo hello world
+    1> hello world
+    [0]
+    ==> OK (Exited with a 0 exit code)
 
 To print another message, try this:
 
-  $ echo goodbye
-  1> goodbye
-  [0]
-  ==> OK (Exited with a 0 exit code)
+    $ echo goodbye
+    1> goodbye
+    [0]
+    ==> OK (Exited with a 0 exit code)
 
 ========================================
 Test: PASSED
@@ -93,7 +93,7 @@ By default, commands that exit with a zero exit code pass.
 
 The whole check passes if all commands in a file pass.
 
-Note: a command must follow two spaces, a dollar sign, and another space.
+Note: a command must follow four spaces, a dollar sign, and another space.
 
 
 ## Non-zero exit codes
@@ -104,7 +104,7 @@ Consider this `README.md`:
 ```
 List the files:
 
-  $ ls -z
+    $ ls -z
 
 ```
 
@@ -125,11 +125,11 @@ Test 'README.md'
 ----------------------------------------
 List the files:
 
-  $ ls -z
-  2> ls: illegal option -- z
-  2> usage: ls [-ABCFGHLOPRSTUWabcdefghiklmnopqrstuwx1] [file ...]
-  [1]
-  ==> FAILED (Non-zero exit code)
+    $ ls -z
+    2> ls: illegal option -- z
+    2> usage: ls [-ABCFGHLOPRSTUWabcdefghiklmnopqrstuwx1] [file ...]
+    [1]
+    ==> FAILED (Non-zero exit code)
 
 ========================================
 Test: FAILED
@@ -145,8 +145,8 @@ For instance, consider this `README.md`:
 ```
 If you echo `hello world`, it should print `hello world` to stdout:
 
-  $ echo hello world
-  hello world
+    $ echo hello world
+    hello world
 
 ```
 
@@ -158,7 +158,7 @@ Check it with `scram`:
 bin/scram README.md
 ```
 
-`scram` will mark this as `Ok`, since the output is an exact match:
+`scram` will mark this as `OK`, since the output is an exact match:
 
 ```
 ========================================
@@ -166,11 +166,11 @@ Test 'README.md'
 ----------------------------------------
 If you echo `hello world`, it should print `hello world` to stdout:
 
-  $ echo hello world
-  hello world
-  1> hello world
-  [0]
-  ==> OK (Output was as expected)
+    $ echo hello world
+    hello world
+    1> hello world
+    [0]
+    ==> OK (Output was as expected)
 
 ========================================
 Test: PASSED
@@ -182,8 +182,8 @@ consider this `README.md`:
 ```
 This should output `goodbye`:
 
-  $ echo hello
-  goodbye
+    $ echo hello
+    goodbye
 
 ```
 
@@ -201,11 +201,11 @@ Test 'README.md'
 ----------------------------------------
 This should output `goodbye`:
 
-  $ echo hello
-  goodbye
-  1> hello
-  [0]
-  ==> FAILED (Unexpected output)
+    $ echo hello
+    goodbye
+    1> hello
+    [0]
+    ==> FAILED (Unexpected output)
 
 ========================================
 Test: FAILED
@@ -221,8 +221,8 @@ For example, consider this `README.md`:
 If you echo `Today is: $(date)` from the command line,
 the output should begin with `Today is`:
 
-  $ echo Today is: $(date)
-  ^Today is.*
+    $ echo Today is: $(date)
+    ^Today is.*
 
 ```
 
@@ -232,7 +232,7 @@ Check it with `scram`:
 bin/scram README.md
 ```
 
-`scram` will mark the command `Ok`, since the output matches
+`scram` will mark the command `OK`, since the output matches
 the regular expression:
 
 ```
@@ -242,11 +242,11 @@ Test 'README.md'
 If you echo `Today is: $(date)` from the command line,
 the output should begin with `Today is`:
 
-  $ echo Today is: $(date)
-  ^Today is.*
-  1> Today is: Wed May 30 14:50:56 UTC 2018
-  [0]
-  ==> OK (Output was as expected)
+    $ echo Today is: $(date)
+    ^Today is.*
+    1> Today is: Wed May 30 14:50:56 UTC 2018
+    [0]
+    ==> OK (Output was as expected)
 
 ========================================
 Test: PASSED
@@ -263,15 +263,15 @@ Consider this `README.md`:
 ```
 Echo two lines:
 
- *$ echo "Lorem ipsum" && echo "dolor sit"
+    *$ echo "Lorem ipsum" && echo "dolor sit"
 
 Echo two lines again:
 
- *$ echo "Lorem ipsum" && echo "sit dolor"
+    *$ echo "Lorem ipsum" && echo "sit dolor"
 
 ```
 
-Note: The format is one space, an asterisk, a dollar sign,
+Note: The format is four spaces, an asterisk, a dollar sign,
 another space, and then the command.
 
 
@@ -289,25 +289,26 @@ Test 'README.md'
 ----------------------------------------
 Echo two lines:
 
- *$ echo "Lorem ipsum" && echo "dolor sit"
-  1> Lorem ipsum
-  1> dolor sit
-  [0]
-  ==> OK (Exited with a 0 exit code)
+    *$ echo "Lorem ipsum" && echo "dolor sit"
+    1> Lorem ipsum
+    1> dolor sit
+    [0]
+    ==> OK (Exited with a 0 exit code)
 
 Echo two lines again:
 
- *$ echo "Lorem ipsum" && echo "sit dolor"
-  1> Lorem ipsum
-  1> sit dolor
-  [0]
-  ==> OK (Exited with a 0 exit code)
+    *$ echo "Lorem ipsum" && echo "sit dolor"
+    1> Lorem ipsum
+    1> sit dolor
+    [0]
+    ==> OK (Exited with a 0 exit code)
 
 ```
 
 The pause occurs because `scram` runs each of the 
 asterisk-marked commands a number of times to calculate
-average running time.
+average running time. It also measures and averages
+other statistics like memory usage (e.g., resident set size).
 
 You can tell `scram` to print the profile stats with the
 `#stats` directive. Alter the `README.md` so it looks like this:
@@ -315,15 +316,15 @@ You can tell `scram` to print the profile stats with the
 ```
 Echo two lines:
 
- *$ echo "Lorem ipsum" && echo "dolor sit"
+    *$ echo "Lorem ipsum" && echo "dolor sit"
 
 Echo two lines again:
 
- *$ echo "Lorem ipsum" && echo "sit dolor"
+    *$ echo "Lorem ipsum" && echo "sit dolor"
 
 Print profiling statistics:
 
-  #stats
+    #stats
 
 ```
 
@@ -341,30 +342,30 @@ Test 'README.md'
 ----------------------------------------
 Echo two lines:
 
- *$ echo "Lorem ipsum" && echo "dolor sit"
-  1> Lorem ipsum
-  1> dolor sit
-  [0]
-  ==> OK (Exited with a 0 exit code)
+    *$ echo "Lorem ipsum" && echo "dolor sit"
+    1> Lorem ipsum
+    1> dolor sit
+    [0]
+    ==> OK (Exited with a 0 exit code)
 
 Echo two lines again:
 
- *$ echo "Lorem ipsum" && echo "sit dolor"
-  1> Lorem ipsum
-  1> sit dolor
-  [0]
-  ==> OK (Exited with a 0 exit code)
+    *$ echo "Lorem ipsum" && echo "sit dolor"
+    1> Lorem ipsum
+    1> sit dolor
+    [0]
+    ==> OK (Exited with a 0 exit code)
 
 Print profiling statistics:
 
-  #stats
-  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
-  | Id | Avg time | Total time | Trials | Avg # Stats | Avg RSS | Avg min RSS | Avg max RSS | Min RSS | Max RSS |
-  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
-  | 1  | 0.2509   | 1.2547     | 5      | 1           | 609     | 609         | 609         | 4       | 792     |
-  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
-  | 2  | 0.2515   | 1.2576     | 5      | 1           | 518     | 518         | 518         | 4       | 904     |
-  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+    #stats
+    +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+    | Id | Avg time | Total time | Trials | Avg # Stats | Avg RSS | Avg min RSS | Avg max RSS | Min RSS | Max RSS |
+    +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+    | 1  | 0.2509s  | 1.2547s    | 5      | 1           | 609Kb   | 609Kb       | 609Kb       | 4Kb     | 792Kb   |
+    +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+    | 2  | 0.2515s  | 1.2576s    | 5      | 1           | 518Kb   | 518Kb       | 518Kb       | 4Kb     | 904Kb   |
+    +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
 
 ========================================
 Test: PASSED
@@ -381,19 +382,19 @@ use the `#diff` directive. Modify the `README.md` again:
 ```
 Echo two lines:
 
- *$ echo "Lorem ipsum" && echo "dolor sit"
+    *$ echo "Lorem ipsum" && echo "dolor sit"
 
 Echo two lines again:
 
- *$ echo "Lorem ipsum" && echo "sit dolor"
+    *$ echo "Lorem ipsum" && echo "sit dolor"
 
 Print profiling statistics:
 
-  #stats
+    #stats
 
 Show the different output:
 
-  #diff
+    #diff
 
 ```
 
@@ -411,30 +412,30 @@ Test 'README.md'
 ----------------------------------------
 Echo two lines:
 
- *$ echo "Lorem ipsum" && echo "dolor sit"
-  1> Lorem ipsum
-  1> dolor sit
-  [0]
-  ==> OK (Exited with a 0 exit code)
+    *$ echo "Lorem ipsum" && echo "dolor sit"
+    1> Lorem ipsum
+    1> dolor sit
+    [0]
+    ==> OK (Exited with a 0 exit code)
 
 Echo two lines again:
 
- *$ echo "Lorem ipsum" && echo "sit dolor"
-  1> Lorem ipsum
-  1> sit dolor
-  [0]
-  ==> OK (Exited with a 0 exit code)
+    *$ echo "Lorem ipsum" && echo "sit dolor"
+    1> Lorem ipsum
+    1> sit dolor
+    [0]
+    ==> OK (Exited with a 0 exit code)
 
 Print profiling statistics:
 
-  #stats
-  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
-  | Id | Avg time | Total time | Trials | Avg # Stats | Avg RSS | Avg min RSS | Avg max RSS | Min RSS | Max RSS |
-  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
-  | 1  | 0.2509   | 1.2547     | 5      | 1           | 609     | 609         | 609         | 4       | 792     |
-  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
-  | 2  | 0.2515   | 1.2576     | 5      | 1           | 518     | 518         | 518         | 4       | 904     |
-  +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+    #stats
+    +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+    | Id | Avg time | Total time | Trials | Avg # Stats | Avg RSS | Avg min RSS | Avg max RSS | Min RSS | Max RSS |
+    +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+    | 1  | 0.2509s  | 1.2547s    | 5      | 1           | 609Kb   | 609Kb       | 609Kb       | 4Kb     | 792Kb   |
+    +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
+    | 2  | 0.2515s  | 1.2576s    | 5      | 1           | 518Kb   | 518Kb       | 518Kb       | 4Kb     | 904Kb   |
+    +----+----------+------------+--------+-------------+---------+-------------+-------------+---------+---------+
 
 Show the different output:
 
@@ -453,22 +454,21 @@ Test: PASSED
 
 ## Summary of syntax
 
-* `scram` sees any line that has zero or more whitespace 
-  characters as a blank line, which it ignores.
-* `scram` sees any fully left-justified lines as commentary, 
-  which it ignores.
+* `scram` sees any empty line, any line with one or more whitespace 
+  characters, as a blank line.
+* `scram` sees any fully left-justified lines as commentary.
 * `scram` identifies commands by looking exactly for strings
-  that follow two spaces, a dollar sign, and another space,
-  i.e.,`[space][space][dollar-sign][space][command-string]`.
+  that follow four spaces, a dollar sign, and another space,
+  i.e.,`[space][space][space][space][dollar-sign][space][command-string]`.
 * `scram` identifies commands to profile by looking exactly
-  for strings that follow one space, an asterisk, a dollar sign,
+  for strings that follow four spaces, an asterisk, a dollar sign,
   and another space, i.e.,
-  `[space][asterisk][dollar-sign][space][command-string]`.
+  `[space][space][space][space][asterisk][dollar-sign][space][command-string]`.
 * Lines of expected output (literal or regular expression) must 
-  be indented two spaces, and they must immediately follow 
-  a command (or a profiled command).
-* The stats directive is the string `#stats`, indented two spaces.
-* The diff directive is the string `#diff`, indented two spaces.
+  be indented four spaces, and they must immediately follow 
+  a command (or a command marked by an asterisk).
+* The stats directive is the string `#stats`, indented four spaces.
+* The diff directive is the string `#diff`, indented four spaces.
 
 
 ## Build and install

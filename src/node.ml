@@ -60,12 +60,12 @@ module Code = struct
 
   let extract_cmd s =
     let len = String.length s in
-    match len > 4 with
+    match len > 6 with
     | false -> s
-    | true -> String.sub s 4 (len - 4)
+    | true -> String.sub s 6 (len - 6)
 
   let trim_prefixes lines =
-    List.map (fun s -> String.sub s 2 ((String.length s) - 2)) lines
+    List.map (fun s -> String.sub s 4 ((String.length s) - 4)) lines
 
   let process data =
     match data with
@@ -91,12 +91,12 @@ module ProfiledCode = struct
 
   let extract_cmd s =
     let len = String.length s in
-    match len > 4 with
+    match len > 7 with
     | false -> s
-    | true -> String.sub s 4 (len - 4)
+    | true -> String.sub s 7 (len - 7)
 
   let trim_prefixes lines =
-    List.map (fun s -> String.sub s 2 ((String.length s) - 2)) lines
+    List.map (fun s -> String.sub s 4 ((String.length s) - 4)) lines
 
   let process data =
     match data with
