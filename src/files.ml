@@ -35,9 +35,14 @@ let read_chars_to_end b c =
     Returns: A string. *)
 let to_string f =
   let ic = open_in_exn f in
-  let buf = Buffer.create 32 in
-  read_chars_to_end buf ic;
-  Buffer.contents buf
+  let b = Buffer.create 64 in
+  let () = try
+    read_chars_to_end b ic
+  with e ->
+    close_in_noerr ic;
+    raise e in
+  close_in_noerr ic;
+  Buffer.contents b
 
 (** Reads a file and returns its contents as a list of lines.
 
